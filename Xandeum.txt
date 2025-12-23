@@ -1,0 +1,2985 @@
+XANDEUM - Exabytes for Solana Programs
+
+Welcome to Xandeum Network, the groundbreaking scalable storage platform transforming Solana with scalable, secure, and smart contract-native solutions for data-intensive Web3 applications. 
+
+Built to tackle network congestion and reliability challenges, Xandeum empowers developers and users with exabyte-scale storage, innovative pNodes for distributed data management, and the XAND token for seamless governance and rewards. 
+
+Introduction
+Imagine unlocking the full potential of Solana as a "world computer", that's exactly what Xandeum delivers as a groundbreaking, scalable storage solution. Built natively on Solana, it empowers developers to craft lightning-fast, data-heavy Web3 apps (sedApps) with mind-boggling exabyte-scale capacity, effortless smart contract integration, and instant random access, leaving behind clunky centralized or off-chain alternatives that slow innovation. 
+
+
+Through a vibrant, community-powered network of cutting-edge provider nodes (pNodes) and innovative tools like Xandeum Web3.js, it redefines possibilities for real-world hits like decentralized social networks buzzing with user content, AI-driven governance platforms, or immersive multimedia experiences, all secured with unbreakable decentralization. Xandeum stands out by conquering the blockchain storage trilemma (explored next), using clever tricks like erasure coding for bulletproof data sharding and gossip protocols for unstoppable distribution. 
+
+
+Dive deeper into its inner workings, from pNode setups and rewarding Storage Income (STOINC) with NFT boosts to seamless Solana synergy. As of November 10, 2025, Xandeum's charging ahead in its South Era roadmap, with fresh triumphs like the Herrenberg release fueling the sprint to mainnet and explosive ecosystem expansion.
+
+
+
+1. What Xandeum Does
+
+
+At its core, Xandeum acts as Solana's missing storage powerhouse, enabling sedApps to handle massive datasets efficiently without the usual blockchain bottlenecks. 
+
+
+It offloads data from validators to a distributed pNode network, ensuring high-throughput operations for everything from file-sharing prototypes to AI tools, all while keeping costs low and security high, unlike traditional solutions that force trade-offs between speed and decentralization.
+
+
+It offloads data from validators to a secure, distributed storage provider (pNode) network, unlocking lightning-fast throughput for any application craving a blockchain-powered file system; from file-sharing protocols and cutting-edge AI tools with massive datasets, to seamless web hosting, NFT storage, and robust databases. If it fits in a traditional Web2 file system, it thrives on the Xandeum Scalable Storage Layer, revolutionizing decentralized efficiency like never before.
+
+
+
+2. What Makes Xandeum Different
+
+
+Xandeum differentiates itself through native Solana integration and community incentives, such as liquid staking with xandSOL and governance via $XAND tokens, creating a self-sustaining ecosystem where operators earn amplified rewards. This contrasts with bolted-on layers or centralized clouds, offering true on-chain data sovereignty and features like real-time heartbeats for reliability, setting the stage for a Web3 revolution without intermediaries.
+
+
+
+Conclusion
+
+
+Xandeum isn't just storage, it's the key to scaling Solana for tomorrow's dApps, blending innovation with accessibility. For the challenges it solves, see the trilemma breakdown; for its technical blueprint, explore the storage solution details.
+
+
+
+The blockchain storage trilemma
+The blockchain storage trilemma is a key challenge in decentralized systems, particularly for platforms like Solana, where traditional storage solutions often fail to balance three essential properties simultaneously: scalability, smart contract-native integration, and random access. Xandeum, a scalable storage layer built on Solana, is designed to solve this trilemma by enabling exabyte-scale storage that integrates seamlessly with smart contracts while allowing efficient, granular data retrieval. Below is a break down of each component of the trilemma and how Xandeum addresses it.
+
+
+
+1. Scalability
+
+
+This refers to the ability to handle massive amounts of data without performance degradation or prohibitive costs. In blockchain contexts, storage often becomes a bottleneck as networks grow, limiting the size and complexity of applications (e.g., dApps struggling with large datasets like social media feeds or AI models). 
+
+
+Xandeum tackles this by creating a scalable network of provider nodes (pNodes) that collectively offer exabyte-scale (and beyond) storage capacity. Through features like erasure coding (which splits data into redundant shards distributed across pods of pNodes), the system ensures tamper-proof, high-volume storage without relying on centralized servers, making it suitable for data-intensive Web3 applications.
+
+
+
+2. Smart Contract-Native Integration
+
+
+Many storage solutions are bolted onto blockchains as separate layers, leading to inefficiencies, high latency, or compatibility issues when interacting with smart contracts. Smart contract-native integration means storage operations are inherently compatible and optimized for direct use within blockchain programs. 
+
+
+Xandeum achieves this by extending Solana's ecosystem with tools like Xandeum Web3.js (an enhanced version of Solana's Web3.js library) and pNode-specific RPC interfaces. This allows developers to call storage primitives (e.g., upload, retrieve, or query data) directly from smart contracts, enabling seamless, high-performance interactions for storage-enabled dApps (sedApps) without intermediaries.
+
+
+
+3. Random Access
+
+
+Traditional decentralized storage often operates at the file level, requiring full downloads to access specific parts of data, which is slow and resource-intensive. Random access enables quick, targeted retrieval of any data segment, similar to how traditional file systems work. 
+
+
+Xandeum supports this through its pNode pod-based storage units (scalable, file-system-like structures) combined with features like crude search capabilities and gossip protocols for dynamic data distribution. This ensures low-latency queries and reconstructions, even in exabyte-scale environments, empowering applications like decentralized social platforms, AI governance tools, or research hubs where precise, real-time data access is crucial.
+
+
+
+ Conclusion
+
+
+By resolving this trilemma, Xandeum positions itself as a foundational layer for Solana, fostering a more robust Web3 ecosystem. Its phased innovation eras (e.g., Deep South for foundational pNodes, South for prototypes like Munich and Herrenberg) progressively build toward mainnet readiness, with ongoing developments like reward tracking and redundancy further enhancing these capabilities.
+
+
+Xandeum's scalable storage solution
+Xandeum's scalable storage solution
+Xandeum's scalable storage solution is a scaling innovation designed specifically for the Solana blockchain, enabling exabyte-scale data storage that supports high-performance, data-intensive decentralized applications (dApps) without compromising on decentralization or efficiency. 
+
+It addresses the limitations of traditional blockchain storage, where data is often expensive, slow, or reliant on centralized providers, by creating a global network of community-operated nodes that integrate seamlessly with Solana's smart contracts. 
+
+This allows developers to build "storage-enabled dApps" (sedApps) for use cases like decentralized social platforms, AI governance tools, research hubs, or file-sharing systems, all while maintaining low-latency access and security.
+
+Core Architecture and How It Works
+At its foundation, Xandeum uses a distributed network of provider nodes (pNodes), which are hardware devices or servers run by community participants to store and serve data. Data uploaded to the network is processed through erasure coding, a technique that splits files into multiple shards (fragments) with built-in redundancy. This ensures that even if some pNodes go offline or fail, the data can be fully reconstructed from the remaining shards, providing tamper-proof reliability and minimizing storage overhead (e.g., achieving high efficiency without needing full duplication). 
+
+These shards are distributed across pods (groups of pNodes that communicate via a gossip protocol) for dynamic status updates, data availability checks, and efficient distribution. Validator nodes (vNodes) monitor the network's integrity using cryptographic proofs, preventing downtime and enabling seamless recovery.
+
+Storage is organized into scalable, file-system-like containers for data. Users and sedApps interact with these through a pNode-specific RPC interface (distinct from Solana's standard RPC), allowing programmatic queries for uploads, retrievals, or status checks. This is facilitated by Xandeum Web3.js, an extension of Solana's Web3.js library, which lets developers call storage primitives directly from smart contracts. 
+
+Fees for storage operations are paid in SOL, which feeds into Xandeum's liquid staking mechanism: staked SOL (converted to xandSOL) earns rewards, including Storage Income (STOINC) amplified by NFT multipliers, and XAND governance tokens. This incentivizes pNode operators and stakers, creating a self-sustaining ecosystem.
+
+Integration with Solana
+Xandeum is natively built on Solana, offloading data from validators to pNodes to reduce network congestion while keeping storage operations on-chain. sedApps can efficiently store and access large datasets (e.g., user profiles, media files, or AI models) without external oracles or off-chain hacks. For example, in recent demos, prototype sedApps like scalable file-sharing tools or AI governance apps showcased real-time operations across global pNodes (from the US to Nigeria and Japan). This integration ensures Solana's high throughput (thousands of TPS) extends to storage-heavy applications, making it viable for Web3 equivalents of centralized services like Dropbox or social media platforms.
+
+Resolution of the Blockchain Storage Trilemma
+Xandeum explicitly solves the "storage trilemma" which is the challenge of balancing scalability, smart contract-native integration, and random access:
+
+Scalability: Supports exabytes+ of storage through distributed pNodes and erasure coding, far beyond typical blockchain limits.
+Smart Contract-Native Integration: Storage is directly callable from Solana programs, avoiding silos and enabling efficient, on-chain data handling.
+Random Access: Unlike file-level systems that require full downloads, Xandeum allows granular, low-latency queries (e.g., via crude search capabilities in buckets), ensuring quick retrieval of specific data segments.
+Development Status and Innovations
+As of October 27, 2025, Xandeum is in the South Era of its six-phase innovation roadmap, having completed the Deep South Era (with 300 incentivized devnet pNodes sold out) and advanced through releases like Munich (first operational pNode prototype with basic file hosting and analytics) and Herrenberg (September 2025: added gossip protocol, RPC interface, 100% reconstructability, crude search, and custom analytics). The Herrenberg release, described as a "new POV" for intelligent decentralized storage, coincided with a Dutch Auction raising funds for the Xandeum Foundation and introducing NFT-boosted rewards. Upcoming releases like Engold (reward tracking) and Stodgard (redundancy for mainnet) aim for full mainnet launch by late 2025.
+
+Unique innovations include the XandMiner tool for easy pNode management (e.g., key generation, registration, and monitoring via a web GUI with Pod Monitor analytics), security best practices (non-standard ports, SSH key-only access), and community-driven features like real-time heartbeats (every 30 seconds) for STOINC eligibility. Recent community discussions highlight clarifications on RPC types (one for storage primitives to pNodes, another for analytics) and excitement for sedApps that "think" via AI/ML integration. 
+
+Overall, Xandeum transforms Solana into a complete platform for Web3, combining speed with unlimited, secure storage. For hands-on involvement, operators can set up pNodes via docs.xandeum.network, and stakers can participate through the Foundation Delegation Program.
+
+
+Core Concepts
+The Xandeum difference
+
+
+Xandeum is a decentralized storage layer built on Solana, designed to overcome the blockchain's storage limitations by enabling scalable, smart contract-native storage up to exabytes for data-intensive applications like DeFi, NFTs, AI, and big data.
+
+
+Scalable Storage Layer: A blockchain-enabled file system that allows Solana programs to store and access massive amounts of data (e.g., terabytes or more) with seamless random access, unlike Solana's limited account-based storage.
+
+
+
+Proof of History Integration: Leverages Solana's PoH for timestamping and ordering storage operations, ensuring efficient, verifiable data management without compromising the base layer's speed.
+
+
+
+Erasure Coding for Redundancy: Data is split into pages, encoded with configurable redundancy (e.g., Reed-Solomon codes), and distributed across nodes to provide fault tolerance and data availability while minimizing storage overhead.
+
+
+
+Cryptographic Proofs (Poke, Peek, Prove): Core primitives for interacting with storage; Poke offloads data to pods, Peek retrieves it on-chain, and Prove verifies integrity using zero-knowledge-like proofs, all wrapped in Solana transactions.
+
+
+
+Decentralized Node Network: Comprises pNodes (provider nodes for actual data storage) and vNodes (validator nodes for supervision), creating a supervised, incentivized ecosystem that scales storage without burdening Solana validators.
+
+
+
+Liquid Staking and DAO Governance: Powered by XAND (governance token) and XandSOL (liquid staking token for SOL), enabling users to stake, earn rewards, and participate in community-driven decisions via the Xandeum DAO.
+
+
+
+Storage Fees in SOL: Fees for storage operations are paid in SOL, distributed to validators, pNodes, and the DAO treasury, fostering economic alignment with the broader Solana ecosystem.
+
+
+
+
+
+
+
+Investor Perspective: Investing in XAND and XandSOL
+
+
+Xandeum offers investment opportunities through its tokens, XAND (governance and utility token) and XandSOL (liquid staking token), with a focus on rewards, governance, and network growth. The model emphasizes community incentives, airdrops, and treasury accrual from fees, positioning it for long-term value in Solana's expanding ecosystem.
+
+
+XAND Tokenomics: Fixed supply of 4.015 billion tokens, with allocations for marketing (10%), ecosystem development (10%), community grants (2%), airdrops, and DAO treasury; circulating supply starts low (580 million on day 1) with vesting cliffs to manage inflation and reward long-term holders.
+
+
+
+Governance and Voting Power: XAND holders lock tokens to vote in the DAO, influencing network upgrades, parameter changes (e.g., fees), and treasury spending, (staking commissions, storage transactions) flow to the treasury, creating value accrual for stakers.
+
+
+
+Airdrops: Five planned airdrops (e.g., snapshot-based, with 50% immediate claim and 50% vesting); 
+
+
+
+XandSOL Liquid Staking: Stake SOL to receive XandSOL, which earns XAND rewards through seasonal programs (3-month cycles); multipliers like 10x in early phases (Hyperdrive for <30k SOL staked) boost yields, with real-time accrual and end-of-season claims—staking volume has exceeded 30,000 SOL (over $8M TVL), offering industry-leading APY of around 15%, double that of competitors like Jito and Marinade.
+
+
+
+Raydium Liquidity Provision Opportunities: Investors can provide liquidity to a XandSOL-related pool on Raydium (e.g., SOL-XAND) to earn trading fees and potential farming rewards with high APRs with liquidity amounts reaching $100,000.
+
+
+
+Incentives: Early investors (XANDC holders) upgrade 1:1 with partial unlocks, plus referral bonuses and liquidity incentives for DEX/CEX providers.
+
+
+Reward Seasons and Boosts: Structured phases (Hyperdrive, Launchpad, Liftoff, Cruising) based on total staked SOL, offering higher rewards for early adopters; DAO can adjust distributions, aligning incentives with network growth.
+
+
+Economic Alignment with Solana: Storage fees in SOL fund the ecosystem, while XAND staking provides yields; foundation reserves support partnerships and development, reducing risk through community control post-Season 4.
+
+
+Risk and Potential: Low initial liquidity for XandSOL requires caution, especially in early Raydium pools; however, deflationary mechanics (e.g., fee burns), treasury growth from adoption, and milestones like staking volume exceeding 30,000 SOL could drive appreciation as storage demand rises.
+
+
+
+
+
+
+Developer Perspective: Participating in pNodes, vNodes, RPC, pRPC
+
+
+Xandeum empowers developers to build and participate in its storage infrastructure, integrating seamlessly with Solana for creating data-heavy dApps. Focus is on running nodes, using protocols for storage access, and contributing to the network for rewards.
+
+
+pNodes (Provider Nodes): Decentralized storage nodes responsible for holding encrypted data pages; participate by running hardware/software setups (e.g., via devnet guides), earning SOL fees and XAND rewards for availability and integrity, when possible join wait lists for sales and incentives.
+
+
+
+vNodes (Validator Nodes): Supervisory nodes that cryptographically monitor pNodes using proofs to ensure data redundancy and prevent faults; developers can run vNodes on Solana's devnet/martinet, contributing to consensus and earning commissions from the DAO treasury.
+
+
+
+RPC (Remote Procedure Call): Refers to mechanisms for random access and integrity challenges in storage operations; developers implement RPC in dApps for querying/verifying pNode data off-chain, integrating with Solana RPC endpoints for seamless calls.
+
+
+
+pRPC (Provider RPC): Extension for provider-side handling, possibly physical node-specific protocols for data replication and challenges; participate by configuring pNodes to respond to pRPC requests, ensuring cryptographic supervision and earning rewards for compliance.
+
+
+
+Devnet Participation: Start by running a devnet validator or pNode using official docs; test storage primitives (Poke/Peek/Prove) in Solana programs, with tools for erasure coding and redundancy configuration.
+
+
+
+Building dApps: Use Xandeum-enabled RPC nodes to extend Solana accounts with Web3 storage; developers can create storage-intensive apps (e.g., AI models, big data) and propose grants via DAO for ecosystem funding.
+
+
+
+Rewards and Governance: Earn from storage income (STOINC) programs, with sold-out pNode rounds indicating high demand, a focus on uptime and performance for merit-based incentives.
+
+
+
+
+Xandeum Greenpaper
+The Xandeum Transformation
+
+
+
+1. Introduction and Motivation
+
+
+Try storing a few gigabytes of data directly on any blockchain, and watch the costs soar into the stratosphere. Yet, Web2 apps run on massive datasets every day without breaking a sweat. Enter Xandeum: a new approach that merges Solana’s lightning-fast consensus with an infinitely scalable storage layer—enabling sedApps (storage-enabled dApps) that rival (and even surpass) traditional centralized services.
+
+
+Building truly decentralized applications requires more than just trustless computation and state (account) management—it demands scalable, cost-effective, and random-access data storage that's 100% integrated into the smart contract platform. While protocols like Filecoin and Arweave have made strides in decentralized storage, they prioritize "whole file" (S3-like) and/or archival use cases over fast, granular reads and writes with read/write heads that can be set to any position. Meanwhile, storing significant data on-chain (e.g., within Solana’s account model) is expensive and limited in capacity. This disconnect is at the core of what we call the blockchain storage trilemma: balancing decentralization, cost, and efficient random access has proven notoriously difficult.
+
+
+Xandeum resolves this challenge by extending Solana’s native account model with an integrated storage layer that implements the “file system” model to developers while still maintaining on-chain verifiability. In other words, Solana dApp devs get fine-grained, random-access data operations—backed by a decentralized network—without sacrificing performance or affordability. By allowing data to flow seamlessly between standard Solana accounts and Xandeum’s scalable file system, we remove the friction that limits what decentralized apps (dApps) can achieve.
+
+
+This unified approach sets the stage for a “Cambrian explosion” of innovative projects ported from Web2 and entirely new categories of sedApps (storage-enabled decentralized applications). From large-scale social platforms to data-heavy research hubs and open knowledge repositories, Xandeum empowers developers to operate at Web2 efficiency and scale, all under the trust guarantees of a blockchain.
+
+
+In the following chapters, we will explore the architectural principles behind Xandeum’s storage layer, discuss how developers can build and deploy sedApps, and illustrate real-world use cases that exemplify the transformative potential of this technology.
+
+
+
+
+
+
+
+2. Xandeum Fundamentals
+
+
+Xandeum’s core innovation is its scalable, file-system-based storage layer that integrates seamlessly with Solana’s high-throughput blockchain. By treating data as files and folders rather than merely on-chain accounts, developers gain flexible, random-access capabilities—without compromising on decentralization or performance. This file system architecture, with their limited set of primitives but including important possibilities called read(), write() and seek() in Unix, has been proven over decades to facilitate a plethora of classes of apps.
+
+
+
+Core Architecture
+
+
+
+
+
+
+Extended Solana Account Model
+
+Solana handles the trustless execution of smart contracts, while Xandeum manages large data sets in an off-chain but cryptographically verifiable, blockchain-grade environment.
+
+Developers can use specific Xandeum transactions (Xtransactions), sent to Xandeum-aware RPC nodes, to copy data from Solana accounts to a given position within a (mostly larger) Xandeum file inside a Xandeum file system and vice versa.
+
+That way, the Solana accounts act as the "RAM" of the world computer (Solana in this case), and the Xandeum scalable storage layer as the (so far missing) "disk".
+
+
+
+
+
+Distributed Storage Nodes
+
+Xandeum relies on a set of storage nodes that collectively maintain and replicate files, ensuring high availability and fault tolerance while being tamper-proof, censorship-resistant and crytographically verifiable, hence the term blockchain-grade storage.
+
+Data is split into pages (borrowed from Unix memory management) and encrypted, so no single node holds a complete plaintext copy. This deters censorship and preserves user privacy.
+
+
+
+
+
+Random-Access Protocol
+
+Rather than storing data in “write-once” layers, Xandeum’s architecture allows for granular reads and writes, similar to a traditional file system.
+
+This innovation underpins the blockchain storage trilemma solution, enabling cost-effective, rapid data queries without large overhead or complex retrieval processes.
+
+
+
+
+
+
+
+
+Key Protocols & Security
+
+
+pNode Stake Consensus (BFT-Light)
+
+
+
+Xandeum’s storage is maintained by provider nodes (pNodes), each of which stakes tokens or collateral to participate.
+
+
+
+A lightweight Byzantine Fault Tolerance (BFT) mechanism ensures that honest pNodes can continue serving data—even if a subset becomes malicious or fails.
+
+
+
+This partial consensus avoids excessive overhead by leveraging Solana for primary trust anchoring, focusing pNode consensus on storage correctness and availability.
+
+
+
+Paging, Replication & Self-Repair
+
+
+
+Files are paged and erasure-coded across multiple pNodes, so that data can be reconstructed even if some nodes lose or corrupt their pieces. We're borrowing from both Unix memory management for the paging as well as ZFS for the redundancy mechanisms.
+
+
+
+The pNode network maintains the configurable redundancy level as set by the storage-enabled dApp (sedApp).
+
+
+
+A self-repair protocol continuously monitors data distribution. If redundancy drops below a safe threshold, new replicas are automatically generated and reassigned to maintain reliability.
+
+
+
+Threshold Signature Schemes (TSS)
+
+
+
+Xandeum uses TSS for cryptographic operations that require joint authorization (e.g., validating data integrity or performing privileged network tasks).
+
+
+
+Rather than relying on a single signer, TSS splits signing authority among multiple pNodes, reducing the attack surface and strengthening network security.
+
+
+
+Periodic Storage Challenges
+
+
+
+Similar to Filecoin’s proof-of-storage and proof of space-time (PoST) concepts, pNodes must respond to periodic challenges from a set of validators—proving they still hold the correct data shards.
+
+
+
+The difference: Xandeum reduces overhead by anchoring these proofs on Solana rather than running resource-intensive verifications entirely on the storage layer.
+
+
+
+Validators verify challenge responses and can penalize pNodes that fail or refuse to produce valid proofs, ensuring persistent data availability.
+
+
+
+Anchoring to Solana’s Ledger
+
+
+
+Each file operation (create, update, delete) and key network event is still anchored to Solana for finality and verifiability.
+
+
+
+This hybrid approach unites pNode-level checks (ensuring actual data availability) with Solana’s trust guarantees (ensuring tamper-proof records of changes).
+
+
+
+
+
+
+
+By combining these protocols—pNode stake consensus, erasure coding, TSS, periodic challenges, and on-chain anchoring—Xandeum delivers blockchain-grade reliability, availability, and integrity for large-scale file storage. Developers can trust that their data is continuously secured by the network, while enjoying the random-access performance and ease of use made possible by Xandeum’s file-system-based approach.
+
+
+
+
+
+
+
+Developer Experience
+
+
+Familiar File-System Interface
+
+Rather than forcing developers to grapple with raw storage opcodes, Xandeum’s APIs abstract data interactions into straightforward file and folder operations.
+
+This reduces the cognitive load for teams transitioning from Web2 infrastructures.
+
+
+
+
+
+Transparent Integration with Solana
+
+Developers can use standard Solana tooling (such as the Solana Program Library, CLI tools, and popular frameworks) to orchestrate on-chain logic.
+
+Data writes and reads in Xandeum are triggered by simple function calls, creating a unified workflow.
+
+
+
+
+
+Flexibility for sedApps
+
+By offering storage-at-scale plus rapid state transitions, sedApps can adopt new user experiences once reserved for centralized platforms.
+
+This paves the way for the Cambrian explosion of decentralized services Xandeum seeks to ignite.
+
+
+
+
+
+
+
+With these fundamentals, Xandeum balances security, cost-efficiency, and random-access performance—ultimately enabling a new class of storage-enabled dApps (sedApps) to thrive on Solana and beyond. In the next chapter, we’ll explore how developers can harness these capabilities to build, deploy, and manage sedApps in practice.
+
+
+
+
+
+
+
+3. Building sedApps on Xandeum
+
+
+Developing storage-enabled dApps (sedApps) on Xandeum combines the speed and familiarity of Solana’s account-based architecture with a file-system-based storage interface that scales to meet real-world data demands. This chapter offers a high-level view of how to build, test, and deploy sedApps—while highlighting best practices for leveraging Xandeum’s integrated storage layer.
+
+
+
+
+
+
+Guiding Principles
+
+
+Embrace Solana’s Core Strengths
+
+
+
+Solana handles high throughput, robust consensus, and standard tooling for transaction settlement and on-chain logic.
+
+
+
+Your dApp logic remains centered around smart contracts (programs) and accounts, just as it would on Solana alone.
+
+
+
+Offload Data to Xandeum
+
+
+
+Whenever you need to store large or frequently accessed datasets, shift that data to Xandeum’s file system based layer instead of bloating on-chain accounts.
+
+
+
+This keeps your application fast and economical, while giving you granular, random-access operations.
+
+
+
+Maintain Trust Anchoring
+
+
+
+Leverage Solana (and potentially other blockchains) for data anchoring.
+
+
+
+Each critical file operation references a hash or Merkle root stored on-chain, ensuring immutability and transparency without storing bulky content directly on the ledger.
+
+
+
+Prioritize User Experience
+
+
+
+sedApps are designed to feel smooth and inviting—similar to Web2 solutions—but underpinned by blockchain-grade trust.
+
+
+
+Whether you’re building a wiki or an online game, simplify the process of reading and writing data so end users barely notice the decentralized mechanics behind the scenes.
+
+
+
+
+
+
+
+Developer Workflow
+
+
+Set Up Your Environment
+
+
+
+Install Solana’s tooling for smart contract compilation, deployment, and testing.
+
+
+
+Configure access to Xandeum’s developer environment (Devnet) and SDK, which expose file storage operations in a structure akin to directories and files.
+
+
+
+Design Data Schemas
+
+
+
+Map out which elements of your dApp should remain in Solana accounts versus which belong in Xandeum’s storage layer.
+
+
+
+For instance:
+
+
+
+Small counters or user balances might be on-chain.
+
+
+
+Large documents or media attachments, databases (see demo applications below), extensive customer data go into Xandeum.
+
+
+
+Define the app's redundancy level, e.g. 7 or 43. That means you'll require to always have 7 pNodes to store pages of your data. This is one of the key factors why Xandeum storage is scalable - we're not bound to Solana account's "Redundancy level is 3,000, period" approach, assuming there are 3,000 validators is the cluster.
+
+
+
+Implement Smart Contracts (Solana Programs)
+
+
+
+Write or adapt existing programs to reference Xandeum file locations, storing hashes or pointers in the on-chain state.
+
+
+
+Ensure that any critical transactions (like file creation or updates) emit events and update these pointers for auditability.
+
+
+
+Handle File Operations
+
+
+
+Use Xandeum’s APIs to create, peek (read), poke (update), or delete files just as you would in a Web2 file system. We're peeking and poking our way through data, an homage to those glorious, spaghetti-coded days of BASIC.
+
+
+
+Each operation triggers cryptographic proof generation, which can be anchored to Solana, preserving trust and audit trails.
+
+
+
+Testing and Debugging
+
+
+
+Deploy your program to Solana Devnet and interact with Xandeum’s storage Devnet.
+
+
+
+Confirm that file hashes match the values stored on-chain, ensuring consistent integration between the two layers.
+
+
+
+Deployment and Scaling
+
+
+
+Once your sedApp is tested, deploy it to the Xandeum-Solana Mainnet (when available) or continue to refine on Devnet.
+
+
+
+Plan for horizontal scaling as your data volume grows.
+
+
+
+Xandeum’s storage layer handles large datasets and surges in traffic without compromising performance.
+
+
+
+
+
+
+
+Working with the Scalable Storage Layer
+
+
+Granular File-Access
+
+
+
+Peek and Poke files in small chunks, rather than dealing with entire blobs or "objects" as in ObjectStore solutions.
+
+
+
+This flexibility is key for real-time applications, collaborative documents or large structured, interconnected and dynamically generated content.
+
+
+
+Optional Versioning
+
+
+
+For use cases that require detailed historical tracking (e.g., collaborative docs, governance records), Xandeum can log file updates as “versions.”
+
+
+
+Each version is tied to a verifiable proof, which can be anchored on-chain at intervals or on demand.
+
+
+
+Developers who don’t need a full edit history can skip version logging to minimize overhead.
+
+
+
+Integration Patterns
+
+
+
+Direct Reference
+
+
+
+Store file references in Solana accounts, updated by your program whenever a user uploads or modifies data.
+
+
+
+Off-Chain Index
+
+
+
+For large datasets, maintain an index in Xandeum’s file tree that links to specific file shards or directories.
+
+
+
+Anchor periodic Merkle roots on-chain for transparent auditing.
+
+
+
+
+
+
+
+Looking Ahead
+
+
+By combining the Solana account model with a decentralized, random-access file-system-based approach, Xandeum unlocks a wealth of possibilities for sedApps. This workflow and architecture will feel familiar to developers who’ve built on Web2 or traditional dApp frameworks—now enhanced by blockchain-grade properties and tight integration into Solana, supervised, overseen, and challenged by the validators, and massively reducing the cost of storage by minimizing redundancy in a configurable way.
+
+
+In a broader sense, by eliminating the storage bottleneck that has prevented large-scale Web2 apps from becoming trustless and decentralized, Xandeum paves the way for a new wave of sedApps—ultimately propelling us closer to a self-determined future where any application can operate without sacrificing speed, usability, or freedom.
+
+
+In the next chapter, we’ll spotlight demo applications that illustrate these principles. From a fast-paced binary guessing game (iKnowIt.live) to an open, community-driven wiki (info.wiki), we’ll show how Xandeum’s scalable storage layer can power data-intensive dApps at scale.
+
+
+
+
+
+
+
+
+
+
+
+4. Demo Applications
+
+
+To demonstrate how Xandeum’s scalable storage layer expands the possibilities for decentralized apps, we’re unveiling two early sedApp prototypes. iKnowIt.live shows off the real-time, interactive potential of offloading data-intensive operations to Xandeum, while info.wiki highlights how massive public data sets can be collaboratively managed and governed on-chain. Both demo apps are to be released open source to showcase the ease with which storage-enabled dApps (sedApps) can built on Xandeum.
+
+
+
+
+
+
+iKnowIt.live
+
+
+A binary guessing game currently under development, aiming to launch live at iKnowIt.live later this year. Inspired by popular “think of a character, the app guesses who it is” games, iKnowIt.live takes a collaborative twist: players co-create and refine the knowledge base behind the game, adding or updating the distinguishing questions that help narrow down the correct answer. Over time, the knowledge tree grows deeper and more nuanced, giving the platform a sense of collective “intelligence.”
+
+
+
+Gameplay & Mechanics
+
+
+Yes/No Questions
+Players think of a person, object, or concept. The game asks a series of binary (yes/no) questions to make its guess.
+
+
+
+Community-Driven Knowledge
+If the game fails or struggles, players can help enrich the database by suggesting new questions or revising existing ones. This collaborative model ensures the knowledge grows organically.
+
+
+
+Transparency & Co-Creation
+Unlike an opaque AI model, iKnowIt.live allows the community to inspect, edit, and expand the underlying knowledge base directly, creating a shared sense of ownership and discovery.
+
+
+
+
+Why It Matters
+
+
+Solana for Speed
+The core game logic—like generating questions, accepting answers, and updating immediate state—relies on Solana. It’s fast, just like RAM, handling near-real-time interactions with minimal latency.
+
+
+
+Xandeum for Capacity
+iKnowIt.live stores its ever-growing knowledge base in Xandeum, analogous to disk storage. This approach ensures large data sets remain affordable and scalable, so the game can keep evolving without skyrocketing costs.
+
+
+
+Avoiding On-Chain Bloat
+Left to Solana alone, storing every user’s contributions and the full knowledge tree would be prohibitively expensive—and potentially technically impossible if it grows to terabytes of data. Xandeum solves that by offloading the biggest storage burdens.
+
+
+
+
+Timeline & Growth
+
+
+Development in Progress
+Work is underway to build out the core mechanics and user interface, with an alpha version targeted for release soon.
+
+
+
+Projected Expansion
+As the knowledge base matures and user numbers soar, the data volume could become massive—potentially reaching gigabytes (or more). Xandeum ensures this growth stays feasible.
+
+
+
+Proof-of-Concept & Beyond
+Though it’s “just a game,” iKnowIt.live illustrates how any data-rich dApp can exceed the practical limits of on-chain storage alone. With Xandeum, developers gain capacity to store significant, ever-expanding data sets while retaining the trust guarantees of Solana.
+
+
+
+
+Key Takeaways
+
+
+Massive, Blockchain-Grade Data, Readily Accessible to Solana Programs
+Large user bases and deep data sets remain practical through Xandeum’s file-system-based storage.
+
+
+
+Cost-Efficiency
+High-speed operations still happen on Solana, while Xandeum handles archival and bulk data needs without incurring exorbitant fees.
+
+
+
+Endless Scalability
+The game can add new questions, track detailed stats, and expand to new domains over time without hitting a storage wall—unlocking a truly limitless knowledge-driven dApp.
+
+
+
+
+
+
+
+
+
+
+
+info.wiki
+
+
+A community-driven knowledge repository—inspired by Wikipedia—fueling a new wave of open, fully decentralized collaboration. By leveraging Xandeum’s storage approach, info.wiki can handle massive datasets while maintaining on-chain verifiability and governance.
+
+
+
+Concept
+
+
+Start with Wikipedia’s openly licensed database of articles (roughly 250GB without media).
+
+
+
+Store this data on Xandeum for random-access reads and writes, while Solana anchors updates and community decisions.
+
+
+
+Over time, new articles and edits are published under info.wiki’s own license, requiring only that the source Wikipedia content remains properly attributed.
+
+
+
+
+Key Features
+
+
+Massive Data Capacity
+
+
+
+info.wiki demonstrates how high-volume storage becomes practical in a decentralized setting.
+
+
+
+By offloading article text and revision histories onto Xandeum, we avoid the high costs typically associated with on-chain data.
+
+
+
+Version Control & History
+
+
+
+Each edit to an article is captured in a Merkle-based versioning structure, ensuring a tamper-evident revision history.
+
+
+
+Periodic anchors on Solana guarantee transparency and trust in the editorial process.
+
+
+
+Community-Driven Curation
+
+
+
+Edits, article creations, and reorganizations can be governed by a dedicated  community wiki token.
+
+
+
+Stake-weighted proposals determine content disputes, editorial guidelines, and other governance matters.
+
+
+
+
+Governance Model
+
+
+Community Wiki Token
+
+
+
+Distributed to early contributors, editors, and those who help maintain the platform’s health.
+
+
+
+Token-holders can vote on community proposals (e.g., new editorial policies, software improvements, or curation rules).
+
+
+
+On-Chain Anchoring
+
+
+
+All governance proposals and decisions live on Solana, ensuring transparent polling and results.
+
+
+
+Major structural changes (like rewriting a significant chunk of the wiki) anchor new file states to Solana for verifiability.
+
+
+
+
+Roadmap
+
+
+Summer / Late Summer 2025
+
+
+
+Initial launch of info.wiki, seeded with the Wikipedia dataset.
+
+
+
+Open invitations for community governance participation, content updates, and feature requests.
+
+
+
+Scalability & Beyond
+
+
+
+Explore multi-chain anchoring as the platform grows, potentially tapping into other networks for added security or specialized user communities.
+
+
+
+Introduce advanced editorial features and expansions (e.g., media file storage) via Xandeum’s evolving capabilities.
+
+
+
+
+
+
+
+Why These Demos Matter
+
+
+Both iKnowIt.live and info.wiki bring to life Xandeum’s defining advantage: combining Solana’s high-speed, low-latency consensus with a file-system-based storage solution capable of handling massive amounts of data. While iKnowIt.live demonstrates how even a knowledge-driven, user-generated gaming experience can grow without hitting on-chain storage limits, info.wiki explores the far-reaching potential of large-scale collaborative editing on a decentralized knowledge platform.
+
+
+These examples underscore a central theme: with Xandeum, developers can offload big data requirements—everything from user-contributed content to gargantuan public datasets—onto a secure yet cost-efficient layer. That means greater freedom to innovate and scale, and less time spent wrestling with the prohibitive economics or technical hurdles of storing everything on-chain. As a result, sedApps on Xandeum can rival (and often surpass) their Web2 counterparts in functionality, all while retaining trust, transparency, and decentralization.
+
+
+By solving the storage bottleneck, Xandeum paves the way for a genuine Cambrian Explosion of new and ported applications—ultimately moving us closer to a future where every app can be self-determined and free from centralized gatekeepers. In the next chapter, we’ll explore Xandeum’s roadmap, including how developers, token-holders, and ecosystem partners can help shape the platform as it progresses toward mainnet and broad adoption.
+
+
+
+
+
+
+
+5. Conclusion & Outlook
+
+
+From iKnowIt.live’s real-time interactivity to info.wiki’s large-scale, community-curated knowledge base, Xandeum demonstrates that decentralized applications no longer need to sacrifice performance for trust. By coupling Solana’s high-throughput blockchain with a file-system-based storage layer, we enable sedApps to operate at scales and speeds once considered unthinkable on-chain.
+
+
+The blockchain storage trilemma is tackled through random-access data operations, anchored in secure, decentralized proofs. This fundamental shift paves the way for a Cambrian Explosion of innovative apps—whether they’re reimagined from Web2 or entirely new concepts that leverage decentralized infrastructures at scale.
+
+
+We invite you to explore, build, and collaborate within the Xandeum ecosystem. Join our community channels, contribute to the codebase, and experiment with Devnet today. Together, we can forge a future where sedApps harness the full potential of blockchain technology—without compromising on speed, user experience, or the richness developers have come to expect from modern applications.
+
+
+
+Operator Guides
+Overview
+
+
+Xandeum's Setup Guide is a streamlined resource for launching your participation in Solana's scalable storage revolution. Whether you're deploying a pNode to contribute storage capacity or a vNode to validate network integrity, this guide equips you with step-by-step instructions.
+
+
+Below, explore summaries of the pNode and vNode guides, with links to details for hands-on implementation.
+
+
+
+pNode Setup
+
+
+pNodes form the backbone of Xandeum's scalable storage, enabling data sharding via erasure coding and gossip protocols. The guide covers hardware requirements (e.g., minimum CPU/RAM/disk specs for DevNet), software installation (Ubuntu preferred), installation, and key steps: generating key pairs with XandMiner, registering via the daemon (XandMinerD). 
+
+
+It highlights security best practices (non-standard ports, SSH keys) and troubleshooting for common issues like connectivity failures. 
+
+
+For full instructions, see the Xandeum pNode Setup Guide
+ section.
+
+
+
+vNode Setup
+
+
+vNodes ensure network trust by monitoring pNode integrity through cryptographic proofs, offloading validation from Solana's core chain. This section outlines prerequisites (e.g., Solana CLI tools, sufficient SOL for staking), software installation of validator software, configuration for DevNet syncing, and activation via the Foundation Delegation Program. 
+
+
+It includes tips for optimizing uptime, integrating with Pod Monitor analytics, and handling epoch-based rewards. Aligned with the Green Paper's vision for tamper-proof resilience, vNodes support the storage trilemma resolution by enabling seamless data reconstruction. Dive into the complete walkthrough in the Validator Home
+ section.
+
+
+
+Conclusion
+
+
+Xandeum's setup guide bridges theory to action, empowering you to join a community-operated ecosystem that's evolving rapidly through eras like South (foundational pNodes) and North (intelligent prototypes). Once configured, monitor performance via the web GUI and contribute to mainnet milestones. Start today to unlock rewards and shape Solana's scalable storage future. For deeper context, reference the Innovation Eras overview or Green Paper for technical foundations.
+
+
+
+Xandeum pNode Setup Guide
+This document provides step-by-step instructions for setting up and managing a pNode for the Xandeum Network. Each section covers a specific part of the process, from prerequisites to troubleshooting.
+
+
+
+
+
+
+
+If you have already run through the prerequisites and security concerns, you can skip to the installation:
+
+
+https://pnodes.xandeum.network/#ibw0o
+
+
+
+
+
+
+
+
+
+Prerequisites for Setting Up a pNode for Xandeum
+
+
+Before you begin setting up your pNode for the Xandeum Network, ensure you meet the following requirements. These steps will prepare your hardware, software, and environment to run xandminer and xandminerd effectively.
+
+
+
+Hardware Requirements
+
+
+Recommended VPS: We recommend using a Virtual Private Server (VPS) from Contabo for $5.50/month. However, Contabo’s default 20 GB SSD storage is insufficient for Xandeum’s needs. Ensure your VPS or server has at least:
+
+
+
+4 CPU core
+
+
+
+4 GB RAM
+
+
+
+80 GB SSD storage (20 GB for system operations + an additional at least 60GiB free space to dedicate to the Xandeum Network)
+
+
+
+1 Gbps network
+
+
+
+Alternative Options: You can use any Ubuntu-based machine, including home servers or other VPS providers, as long as they meet the minimum specs above and have a stable internet connection.
+
+
+
+Storage for Blockchain-Grade Data: Ensure your pNode has sufficient storage (e.g., additional drives or partitions) to handle Xandeum’s blockchain-grade storage needs. xandminerd will interface with your hardware to query drives and partitions.
+
+
+
+
+Software Requirements
+
+
+Operating System on pNode:
+
+
+
+Ubuntu 24.04 LTS or later (recommended for stability and compatibility with Xandeum software).
+
+
+
+Ensure the pNode has a clean, updated Ubuntu installation.
+
+
+
+Local Machine OS (for Managing pNode):
+
+
+
+Windows 10 or later, macOS, or any Linux distribution (e.g., Ubuntu, Fedora).
+
+
+
+Windows users must have PowerShell or Command Prompt available (built into Windows 10/11).
+
+
+
+SSH Client:
+
+
+
+Windows: Built-in OpenSSH client (available since Windows 10).
+
+
+
+macOS/Linux: Built-in ssh command (via OpenSSH).
+
+
+
+Web Browser: Any modern browser (e.g., Chrome, Firefox, Edge) to access the xandminer GUI at http://localhost:3000.
+
+
+
+
+Network Requirements
+
+
+Stable Internet Connection: Your pNode and local machine need a reliable internet connection for SSH access and software updates.
+
+
+
+Port Availability: Ensure ports 3000 and 4000 are not blocked by firewalls or your ISP on your pNode, as it will be used for the xandminer GUI and xandminerd background service via an SSH tunnel.
+
+
+
+Static IP (Recommended): A static IP address for your pNode is recommended for consistent access, though dynamic IPs can work with proper DNS configuration.
+
+
+
+
+Tools and Access
+
+
+Git: Installed on your pNode to clone repositories from GitHub.
+
+
+
+SSH Keys: You’ll need to generate an SSH key pair (Ed25519 recommended) on your local machine and add it to your pNode for secure access. Instructions for this are in the next section.
+
+
+
+Basic Command-Line Knowledge: Familiarity with terminal commands (e.g., ssh, curl, git) on your local machine and pNode.
+
+
+
+
+Notes
+
+
+Important: These prerequisites ensure your pNode can run xandminer https://github.com/Xandeum/xandminer and xandminerd https://github.com/Xandeum/xandminerd effectively. If you have questions or encounter issues, consult our Troubleshooting section or join our community on X/Discord for support.
+
+
+
+
+
+Future BFT Consensus: As Xandeum evolves to include Byzantine Fault Tolerance (BFT) consensus, your pNode will need additional resources. We’ll provide updates in future sections.
+
+
+
+
+
+Xandeum Network Branding: Note that “Xandeum Network” is our official branding, with both words capitalized. Visit our main website at xandeum.network for more information.
+
+
+
+
+
+
+
+
+
+SSH Key Setup for pNode Access
+
+
+To securely access and manage your pNode, you'll need to generate an SSH key pair on your local machine and configure it on your pNode. We recommend using Ed25519 keys for their security and performance, but RSA 4096 is also supported as a fallback.
+
+
+
+Generating an SSH Key Pair
+
+
+Follow these steps based on your local machine's operating system.
+
+
+
+On Windows (Using OpenSSH)
+
+
+Requirements: Ensure you're running Windows 10 or later with PowerShell or Command Prompt available.
+
+
+
+Generate an Ed25519 Key:
+
+
+
+Open PowerShell or Command Prompt.
+
+
+
+Run the following command to generate an Ed25519 key pair: ssh-keygen -t ed25519
+
+
+
+Press Enter to accept the default file location (C:\Users\<username>\.ssh\id_ed25519) or specify a custom path.
+
+
+
+Optionally, enter a passphrase for added security (recommended, but optional).
+
+
+
+This will create two files: id_ed25519 (private key) and id_ed25519.pub (public key) in your .ssh directory.
+
+
+
+Fallback to RSA 4096 (if Needed):
+If Ed25519 isn't compatible with your pNode, generate an RSA 4096 key with:
+ssh-keygen -t rsa -b 4096
+
+
+
+Verify the Key: Check that the keys were generated by listing the .ssh directory:
+dir C:\Users\<username>\.ssh
+
+
+
+
+On Linux or macOS
+
+
+Generate an Ed25519 Key:
+
+
+
+Open a terminal.
+
+
+
+Run the following command to generate an Ed25519 key pair:
+ssh-keygen -t ed25519
+
+
+
+Press Enter to accept the default file location (/home/<username>/.ssh/id_ed25519) or specify a custom path.
+
+
+
+Optionally, enter a passphrase for added security (recommended, but optional).
+
+
+
+This will create id_ed25519 (private key) and id_ed25519.pub (public key) in your .ssh directory.
+
+
+
+Fallback to RSA 4096 (if Needed):
+If Ed25519 isn't compatible, generate an RSA 4096 key with:
+ssh-keygen -t rsa -b 4096
+
+
+
+Verify the Key: Check the keys by listing the .ssh directory:
+ls -l ~/.ssh
+
+
+
+
+Adding the Public Key to Your pNode
+
+
+Copy the public key (id_ed25519.pub or id_rsa.pub, depending on the key type you generated) to your clipboard:
+
+
+
+On Windows (PowerShell):
+type C:\Users\<username>\.ssh\id_ed25519.pub | clip
+
+
+
+On Linux/macOS:
+cat ~/.ssh/id_ed25519.pub | pbcopy  # macOS
+cat ~/.ssh/id_ed25519.pub | xclip    # Linux (if xclip is installed)
+
+
+
+SSH into your pNode using password authentication (you'll disable this later):
+ssh root@<my.p.node.ip>
+Replace <my.p.node.ip> with your pNode's IP address.
+
+
+
+Create or edit the ~/.ssh/authorized_keys file on your pNode:
+mkdir -p ~/.ssh
+nano ~/.ssh/authorized_keys
+Paste your public key into the file, save, and exit (Ctrl+O, Enter, Ctrl+X in nano).
+
+
+
+Ensure the permissions are correct:
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+
+
+
+
+Testing SSH Access
+
+
+Exit the pNode (exit) and test SSH access using your private key:
+
+
+
+On Windows (PowerShell):
+ssh -i C:\Users\<username>\.ssh\id_ed25519 root@<my.p.node.ip>
+
+
+
+On Linux/macOS:
+ssh -i ~/.ssh/id_ed25519 root@<my.p.node.ip>
+
+
+
+If prompted, enter your SSH key passphrase (if you set one). You should now access your pNode without a password. If you are still prompted for a password, go back through the above steps or ask for assistance from the community.
+
+
+
+
+Disabling Password Login for Enhanced Security
+
+
+To maximize the security of your pNode, you should disable password-based SSH login and rely solely on SSH keys. This prevents brute-force attacks and ensures only authorized users with SSH keys can access your pNode. However, this step is irreversible without access to your SSH private key, so proceed carefully.
+
+
+
+Important Precautions
+
+
+Ensure you've successfully tested SSH key-based access (as described earlier in this guide) before proceeding.
+
+
+
+Keep your SSH private key safe and backed up. If you lose it, you won't be able to access your pNode without assistance from your hosting provider.
+
+
+
+Run this step from a secure connection, and keep your current SSH session open in case you need to revert changes.
+
+
+
+
+Using Our Script to Disable Password Login
+
+
+We've created a simple script to safely disable password login on your pNode, handling common configuration file variations (e.g., /etc/ssh/sshd.d). Follow these steps:
+Note: will only work if you are using file naming from above (ie ~/.ssh/id_ed25519)
+
+
+
+
+Note: Option 4 In the Xandeum pNode Software Installer will handle SSH hardening also. You may use either method.
+
+
+
+
+
+
+
+
+Download our SSH hardening script by running the following command in your terminal:
+wget https://gist.github.com/bernieblume/7c49b49e718f9e41d4802e94e7a9e103/raw/nopwlogin.sh
+
+
+
+Make the script executable:
+chmod +x nopwlogin.sh
+
+
+
+Run the script with sudo:
+sudo ./nopwlogin.sh
+
+
+
+Follow the on-screen instructions and verify that you can still access your pNode using your SSH key.
+
+
+
+
+Manual Instructions (Advanced Users)
+
+
+If you prefer to disable password login manually or the script doesn't work for your setup, follow these steps:
+
+
+SSH from your local machine into your pNode using your SSH key:
+ssh -i ~/.ssh/id_ed25519 root@<my.p.node.ip>
+
+
+
+Open the SSH configuration file in a text editor (e.g., nano or vim):
+nano /etc/ssh/sshd_config
+
+
+
+Look for the following lines and set them to no. If the lines are commented (start with #), uncomment them by removing the #:
+PasswordAuthentication no
+ChallengeResponseAuthentication no
+
+
+
+Check if /etc/ssh/sshd_config.d/ exists. If it does, create or edit a file (e.g., 10-disable-password-auth.conf) in that directory and add:
+PasswordAuthentication no
+ChallengeResponseAuthentication no
+
+
+
+Save the file and exit the editor (in nano, press Ctrl+O, Enter, then Ctrl+X).
+
+
+
+Restart the SSH service:
+systemctl restart ssh
+or, if that doesn't work:
+service ssh restart
+
+
+
+Test SSH access with your key to ensure you're not locked out:
+ssh -i ~/.ssh/id_ed25519 root@<my.p.node.ip>
+
+
+
+
+Troubleshooting
+
+
+If you're locked out, restore from the backups created by the script (located at /etc/ssh/sshd_config.bak-* and /etc/ssh/sshd_config.d.bak-*) or contact your hosting provider for console access.
+
+
+
+If password login is still enabled, check for conflicting settings in /etc/ssh/sshd_config.d/ files and ensure the SSH service restarted correctly.
+
+
+
+Note: Disabling password login is permanent unless you re-enable it manually or via console access. Always test key-based access before proceeding.
+
+
+
+
+
+
+
+
+
+Installing and Configuring xandminer on Your pNode
+
+
+Now that you've secured your pNode with SSH key-based authentication and disabled password login, it's time to install and configure the xandminer software to set up your pNode as a mining node. This chapter guides you through downloading and running the pNode installer script, which automates the setup of xandminer and xandminerd, including repository management, systemd service configuration, and verification steps.
+
+
+
+Prerequisites
+
+
+Before proceeding, ensure the following:
+
+
+You have SSH access to your pNode using your SSH key (as configured in the previous chapter).
+
+
+
+Optionally, open an ssh session tunnel that forwards the ports that will be needed later as well:
+
+
+
+ssh -i ~/.ssh/id_ed25519 root@<my.p.node.ip> -L 4000:localhost:4000 -L 3000:localhost:3000 8000:localhost:8000
+
+
+
+This will allow port http://localhost:3000 in your web browser to connect through the ssh tunnel to your xandminer
+
+
+
+Port 4000 is used to connect the GUI to the xandminerd service
+
+
+
+Port 8000 is used for the stats page
+
+
+
+Your pNode is running a compatible Linux distribution (e.g., Ubuntu 20.04 or later, Debian 11 or later).
+
+
+
+You have root privileges on your pNode.
+
+
+
+Git, curl, and systemd are installed on your pNode. You can install them with:
+apt update && apt install -y git curl systemd
+
+
+
+Restart if prompted to load newer kernel
+
+
+
+
+Downloading and Running the pNode Installer
+
+
+We've created a simple installer script to automate the setup of xandminer and xandminerd on your pNode. This script checks for critical security settings, clones or updates the repositories, configures systemd services, and provides instructions for the next steps.
+
+
+
+Steps to Run the Installer
+
+
+SSH from your local machine into your pNode using your SSH key:
+ssh -i ~/.ssh/id_ed25519 root@<my.p.node.ip> -L 4000:localhost:4000 -L 3000:localhost:3000 8000:localhost:8000
+Replace <my.p.node.ip> with your pNode's IP address.
+
+
+
+Download the installer script by running the following command in your terminal:
+wget -O install.sh "https://raw.githubusercontent.com/Xandeum/xandminer-installer/refs/heads/master/install.sh"
+
+
+
+Make install.sh executable
+chmod a+x install.sh
+
+
+
+Run the script with sudo:
+./install.sh
+
+
+
+Follow the on-screen instructions and verify the output to ensure the installation completed successfully. Choose option:
+ 1. Install Xandeum pNode Software
+
+
+
+
+What the Installer Script Does
+
+
+The installer script performs the following actions:
+
+
+Repository Management:
+
+
+
+Checks if the xandminer and xandminerd directories exist in /root.
+
+
+
+If the directories don't exist, the script clones the respective Git repositories into /root/xandminer and /root/xandminerd.
+
+
+
+If the directories exist, the script changes into each directory and runs git pull to update the repositories to the latest version.
+
+
+
+Systemd Service Configuration:
+
+
+
+Copies the xandminer.service and xandminerd.service files (located in the root directory of their respective repositories) to /etc/systemd/system.
+
+
+
+Enablesand starts the services using systemctl enable xandminer.service --now and systemctl enable xandminerd.service --now
+
+
+
+Success Message: Outputs a success message indicating that the services are enabled and running, along with a link to the documentation for further instructions (using a placeholder for now, e.g., <docs-link>).
+
+
+
+
+Troubleshooting
+
+
+If Git cloning or pulling fails, ensure you have an active internet connection and the necessary permissions on your pNode.
+
+
+
+If systemd service configuration fails, check the permissions of /etc/systemd/system and ensure systemd is properly installed and running.
+
+
+
+
+
+
+
+
+Next Steps
+
+
+Once the installer script has completed successfully, it is reccomeended to restart your pNode to load any new kernel drivers. Xandminer and xandminerd services will be running upon reboot. Refer to the documentation at <docs-link> for detailed instructions on starting, monitoring, and troubleshooting the services, as well as configuring xandminer for optimal mining performance.
+
+
+
+
+
+
+Starting and Monitoring xandminer Services
+
+
+Now that you’ve installed and enabled the xandminer and xandminerd services on your pNode using the installer script, it’s time to start them and monitor their operation. This chapter walks you through manually starting the services, checking their status, reviewing logs, and troubleshooting common issues to ensure your pNode is mining effectively.
+
+
+
+Prerequisites
+
+
+Before proceeding, ensure the following:
+
+
+You have SSH access to your pNode using your SSH key (as configured in the “SSH Key Setup” chapter).
+
+
+
+The xandminer and xandminerd services are installed and enabled on your pNode (as described in the “Installing and Configuring xandminer on Your pNode” chapter).
+
+
+
+You have root privileges on your pNode.
+
+
+
+
+Starting the xandminer and xandminerd Services
+
+
+The installer script enabled the services but did not start them. Follow these steps to manually start the services:
+
+
+SSH into your pNode using your SSH key:
+ssh -i ~/.ssh/id_ed25519 root@<my.p.node.ip> -L 4000:localhost:4000 -L 3000:localhost:3000 8000:localhost:8000
+Replace <my.p.node.ip> with your pNode’s IP address.
+
+
+
+Start the xandminer service:
+systemctl start xandminer
+
+
+
+Start the xandminerd service:
+systemctl start xandminerd
+
+
+
+
+Checking Service Status
+
+
+After starting the services, verify they are running correctly:
+
+
+Check the status of the xandminer service:
+systemctl status xandminer
+Look for output indicating “active (running)” and no errors. If the service isn’t running, you’ll see “inactive” or “failed.”
+
+
+
+Check the status of the xandminerd service:
+systemctl status xandminerd
+
+
+
+
+Sample Output for a Running Service
+
+
+Here’s an example of what a running service status might look like:
+
+
+
+Text
+
+
+
+1xandminer.service - xandminer Mining Service
+2   Loaded: loaded (/etc/systemd/system/xandminer.service; enabled; vendor preset: enabled)
+3   Active: active (running) since Fri 2025-02-21 10:00:00 UTC; 5min ago
+4 Main PID: 12345 (xandminer)
+5    Tasks: 10 (limit: 4915)
+6   Memory: 50.0M
+7   CGroup: /system.slice/xandminer.service
+8           └─12345 /usr/bin/xandminer --config /root/xandminer/config.json
+
+xandminer.service - xandminer Mining Service
+   Loaded: loaded (/etc/systemd/system/xandminer.service; enabled; vendor preset: enabled)
+   Active: active (running) since Fri 2025-02-21 10:00:00 UTC; 5min ago
+ Main PID: 12345 (xandminer)
+    Tasks: 10 (limit: 4915)
+   Memory: 50.0M
+   CGroup: /system.slice/xandminer.service
+           └─12345 /usr/bin/xandminer --config /root/xandminer/config.json
+
+/**
+ * Reset the text fill color so that placeholder is visible
+ */
+.npm__react-simple-code-editor__textarea:empty {
+  -webkit-text-fill-color: inherit !important;
+}
+
+/**
+ * Hack to apply on some CSS on IE10 and IE11
+ */
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  /**
+    * IE doesn't support '-webkit-text-fill-color'
+    * So we use 'color: transparent' to make the text transparent on IE
+    * Unlike other browsers, it doesn't affect caret color in IE
+    */
+  .npm__react-simple-code-editor__textarea {
+    color: transparent !important;
+  }
+
+  .npm__react-simple-code-editor__textarea::selection {
+    background-color: #accef7 !important;
+    color: transparent !important;
+  }
+}
+
+
+
+
+
+
+Or, if there’s an issue:
+
+
+
+Text
+
+
+
+1xandminer.service - xandminer Mining Service
+2   Loaded: loaded (/etc/systemd/system/xandminer.service; enabled; vendor preset: enabled)
+3   Active: failed (Result: exit-code) since Fri 2025-02-21 10:05:00 UTC; 1min ago
+4     Docs: <docs-link>
+5  Process: 12346 ExecStart=/usr/bin/xandminer --config /root/xandminer/config.json (code=exited, status=1/FAILURE)
+6
+7### Monitoring Logs
+8To troubleshoot or monitor the services, check their logs using `journalctl`:
+9
+101. View logs for xandminer:
+11   `journalctl -u xandminer`
+122. View logs for xandminerd:
+13   `journalctl -u xandminerd`
+14
+15You can also tail the logs in real-time:
+16   `journalctl -u xandminer -f`
+17   `journalctl -u xandminerd -f`
+
+xandminer.service - xandminer Mining Service
+   Loaded: loaded (/etc/systemd/system/xandminer.service; enabled; vendor preset: enabled)
+   Active: failed (Result: exit-code) since Fri 2025-02-21 10:05:00 UTC; 1min ago
+     Docs: <docs-link>
+  Process: 12346 ExecStart=/usr/bin/xandminer --config /root/xandminer/config.json (code=exited, status=1/FAILURE)
+
+### Monitoring Logs
+To troubleshoot or monitor the services, check their logs using `journalctl`:
+
+1. View logs for xandminer:
+   `journalctl -u xandminer`
+2. View logs for xandminerd:
+   `journalctl -u xandminerd`
+
+You can also tail the logs in real-time:
+   `journalctl -u xandminer -f`
+   `journalctl -u xandminerd -f`
+
+/**
+ * Reset the text fill color so that placeholder is visible
+ */
+.npm__react-simple-code-editor__textarea:empty {
+  -webkit-text-fill-color: inherit !important;
+}
+
+/**
+ * Hack to apply on some CSS on IE10 and IE11
+ */
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  /**
+    * IE doesn't support '-webkit-text-fill-color'
+    * So we use 'color: transparent' to make the text transparent on IE
+    * Unlike other browsers, it doesn't affect caret color in IE
+    */
+  .npm__react-simple-code-editor__textarea {
+    color: transparent !important;
+  }
+
+  .npm__react-simple-code-editor__textarea::selection {
+    background-color: #accef7 !important;
+    color: transparent !important;
+  }
+}
+
+
+
+
+
+
+Look for any error messages, warnings, or indications of successful mining activity (e.g., connection to the mining pool, hash rates, etc.).
+
+
+
+Troubleshooting Common Issues
+
+
+If the services fail to start or aren’t running as expected, try the following:
+
+
+Check Permissions: Ensure the service files in /etc/systemd/system and the repository directories (/root/xandminer, /root/xandminerd) have the correct permissions:
+
+
+
+
+Text
+
+
+
+1   chmod 644 /etc/systemd/system/xandminer.service
+2   chmod 644 /etc/systemd/system/xandminerd.service
+3   chmod -R 755 /root/xandminer
+4   chmod -R 755 /root/xandminerd
+
+   chmod 644 /etc/systemd/system/xandminer.service
+   chmod 644 /etc/systemd/system/xandminerd.service
+   chmod -R 755 /root/xandminer
+   chmod -R 755 /root/xandminerd
+
+/**
+ * Reset the text fill color so that placeholder is visible
+ */
+.npm__react-simple-code-editor__textarea:empty {
+  -webkit-text-fill-color: inherit !important;
+}
+
+/**
+ * Hack to apply on some CSS on IE10 and IE11
+ */
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  /**
+    * IE doesn't support '-webkit-text-fill-color'
+    * So we use 'color: transparent' to make the text transparent on IE
+    * Unlike other browsers, it doesn't affect caret color in IE
+    */
+  .npm__react-simple-code-editor__textarea {
+    color: transparent !important;
+  }
+
+  .npm__react-simple-code-editor__textarea::selection {
+    background-color: #accef7 !important;
+    color: transparent !important;
+  }
+}
+
+
+
+
+
+
+Restart Services: If you make changes, restart the services:
+systemctl restart xandminer
+systemctl restart xandminerd
+
+
+
+Review Logs: Use journalctl to identify specific errors (e.g., missing dependencies, configuration issues, or network problems).
+
+
+
+Verify Dependencies: Ensure all required dependencies for xandminer and xandminerd are installed. 
+
+
+
+Check Network: Ensure your pNode has internet access and can connect to the mining pool (if applicable).
+
+
+
+
+Enabling Automatic Startup (Optional)
+
+
+If you want the services to start automatically on boot (in addition to manual starting), you can enable them (though this was already done by the installer):
+systemctl enable xandminer
+systemctl enable xandminerd
+
+
+
+Next Steps
+
+
+Once the services are running and monitored, you can configure xandminer for optimal mining performance.
+
+
+
+
+
+
+Setting Up an SSH Tunnel and Accessing the xandminer Web GUI
+
+
+To manage your pNode remotely and access the xandminer web-based graphical user interface (GUI) securely, you can set up an SSH tunnel using OpenSSH on Windows. This chapter guides you through creating an SSH tunnel to forward traffic from your local machine to the xandminer web GUI running on your pNode, ensuring secure and encrypted access.
+
+
+
+Prerequisites
+
+
+Before proceeding, ensure the following:
+
+
+You have SSH access to your pNode using your SSH key (as configured in the “SSH Key Setup” chapter).
+
+
+
+The xandminer and xandminerd services are installed, enabled, and running (as described in the “Starting and Monitoring xandminer Services” chapter).
+
+
+
+The xandminer web GUI is enabled and configured on your pNode.
+
+
+
+You have root privileges on your pNode.
+
+
+
+You have OpenSSH installed on your Windows machine. You can install it via Windows 10/11 Settings under “Optional Features” or through Windows Subsystem for Linux (WSL).
+
+
+
+
+Enabling the xandminer Web GUI
+
+
+Open an SSH tunnel that forwards the proper ports through the tunnel, ensure the xandminer service is enabled and running on your pNode:
+
+
+SSH into your pNode using OpenSSH on Windows:
+ssh -i %userprofile%\.ssh\id_ed25519 root@<my.p.node.ip> -L 4000:localhost:4000 -L 3000:localhost:3000 8000:localhost:8000
+Replace <my.p.node.ip> with your pNode’s IP address.
+
+
+
+Check if the xandminer web GUI service is installed and enabled:
+systemctl status xandminer
+If the service isn’t running or installed, refer to the xandminer installation instructions.
+
+
+
+Start and enable the xandminer web GUI service:
+systemctl enable --now xandminer
+
+
+
+Verify the GUI is accessible locally on the pNode (if on the same network) by opening a web browser on the pNode and navigating to http://localhost:3000 (or the port specified in the documentation).
+
+
+
+
+
+
+Setting Up an SSH Tunnel with OpenSSH on Windows
+
+
+The xandminer web GUI typically runs on a local port (e.g., 3000) on your pNode, but it may not be exposed publicly for security reasons. You can use an SSH tunnel with OpenSSH on Windows to forward traffic from your local machine to the pNode’s GUI port securely.
+
+
+Open a Windows Command Prompt, PowerShell, or WSL terminal on your local machine and create an SSH tunnel to forward local ports 3000 and 4000 to the pNode’s ports 3000 and 4000:
+ssh -i %userprofile%\.ssh\id_ed25519 -L 4000:localhost:4000 -L 3000:localhost:3000 8000:localhost:8000 root@<my.p.node.ip>
+
+
+
+-L 3000:localhost:3000 forwards local port 3000 to port 3000 on the pNode.
+
+
+
+-L 4000:localhost:4000 forwards local port 4000 to port 4000 on the pNode.
+
+
+
+-L 8000:localhost:8000 forwards local port 8000 to port 8000 on the pNode.
+
+
+
+Replace <my.p.node.ip> with your pNode’s IP address.
+
+
+
+Keep the terminal window open to maintain the tunnel. The SSH connection will stay active until you close the terminal, the session times out, or the connection is interrupted.
+
+
+
+Open a web browser on your local machine and navigate to http://localhost:3000 to access the xandminer web GUI.
+
+
+
+
+Managing the SSH Tunnel
+
+
+When using an SSH tunnel, consider the following guidance to manage it effectively and securely:
+
+
+Leaving the Tunnel Open: You can leave the SSH tunnel open while actively managing your pNode via the xandminer web GUI. This allows continuous access to the GUI without needing to recreate the tunnel frequently. However, be aware that the tunnel might close over time due to network interruptions, idle timeouts, or system sleep/hibernate modes on your local machine or pNode.
+
+
+
+Reopening the Tunnel: If the tunnel closes (e.g., due to a network disconnection or timeout), you’ll need to reopen it by rerunning the SSH command:
+ssh -i %userprofile%\.ssh\id_ed25519 -L 4000:localhost:4000 -L 3000:localhost:3000 root@<my.p.node.ip>
+Check the terminal for error messages (e.g., “Connection closed” or “Connection timed out”) to diagnose why the tunnel closed.
+
+
+
+Avoid Leaving Unattended for Too Long: Do not leave the SSH tunnel open for extended periods when you’re not actively using it, such as when you leave your PC unattended for hours or overnight. Leaving the tunnel open unnecessarily can expose your pNode to potential security risks if the connection is compromised or if your local machine is left unsecured. Close the terminal or disconnect the SSH session (exit or Ctrl+C) when you’re done using the GUI to minimize risks.
+
+
+
+
+Checking the pNode ports:
+
+
+Use this one-line command to check if the correct ports are accessible from the public interent. 
+It tests public UDP 5000 and localhost TCP 3000 and TCP 4000
+The tool uses nc (netcat) and ss (socket statistics) to test the pNode ports.
+
+
+
+CLI
+
+
+
+1MY_IP=$(curl -s https://ipinfo.io/ip) && echo " UDP 5000 on $MY_IP" && if command -v nc >/dev/null 2>&1; then timeout 10 nc -zu $MY_IP 5000 && echo "✅ UDP 5000 PUBLIC" || echo "❌ UDP 5000 NOT PUBLIC"; else echo "⚠️  netcat (nc) not installed - cannot test UDP 5000"; fi && echo " Localhost TCP:" && for port in 3000 4000; do ss -tlnp 2>/dev/null | grep -q "127.0.0.1:$port " && echo "✅ $port" || echo "❌ $port"; done
+
+MY_IP=$(curl -s https://ipinfo.io/ip) && echo " UDP 5000 on $MY_IP" && if command -v nc >/dev/null 2>&1; then timeout 10 nc -zu $MY_IP 5000 && echo "✅ UDP 5000 PUBLIC" || echo "❌ UDP 5000 NOT PUBLIC"; else echo "⚠️  netcat (nc) not installed - cannot test UDP 5000"; fi && echo " Localhost TCP:" && for port in 3000 4000; do ss -tlnp 2>/dev/null | grep -q "127.0.0.1:$port " && echo "✅ $port" || echo "❌ $port"; done
+
+/**
+ * Reset the text fill color so that placeholder is visible
+ */
+.npm__react-simple-code-editor__textarea:empty {
+  -webkit-text-fill-color: inherit !important;
+}
+
+/**
+ * Hack to apply on some CSS on IE10 and IE11
+ */
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  /**
+    * IE doesn't support '-webkit-text-fill-color'
+    * So we use 'color: transparent' to make the text transparent on IE
+    * Unlike other browsers, it doesn't affect caret color in IE
+    */
+  .npm__react-simple-code-editor__textarea {
+    color: transparent !important;
+  }
+
+  .npm__react-simple-code-editor__textarea::selection {
+    background-color: #accef7 !important;
+    color: transparent !important;
+  }
+}
+
+
+
+
+
+
+
+
+The output should look like this:
+If you have any red X marks next to a port you need to investigate the connection issues.
+
+
+
+
+
+
+
+
+
+
+
+
+This section is now complete. See below for advanced and future features.
+
+
+Otherwise, continue on to Register your pNode
+ on the Xandeum DevNet.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Troubleshooting SSH Tunnels and Web GUI Access
+
+
+If you encounter issues, try the following:
+
+
+Connection Refused: Ensure the xandminer web GUI service is running on the pNode:
+sudo systemctl status xandminer
+Start it if necessary: sudo systemctl enable --now xandminer.
+
+
+
+Port Conflict: Verify port 3000 (or the configured GUI port) isn’t in use by another service on your local machine or pNode:
+sudo netstat -tuln | grep 3000
+
+
+
+SSH Key Issues: Confirm your SSH key is correctly configured and permissions are set (e.g., chmod 600 %userprofile%\.ssh\id_ed25519 on WSL or via a Linux-like file manager on Windows).
+
+
+
+Firewall Rules: Ensure port 3000 is open on the pNode for local access (if not using a tunnel, though tunnels bypass external firewalls):
+ufw allow 3000/tcp
+
+
+
+Browser Issues: Clear your browser cache or try a different browser if the GUI doesn’t load.
+
+
+
+
+Automating SSH Tunnels (Optional)
+
+
+For frequent access, automate the SSH tunnel using a batch script or SSH configuration:
+
+
+Create a batch script (e.g., start_ssh_tunnel.bat):
+@echo off
+start cmd /k "ssh -i %userprofile%.ssh\id_ed25519 -L 3000:localhost:3000 -L 4000:localhost:4000 root@<my.p.node.ip>"
+Save it, double-click to run, and it will open a new Command Prompt window with the tunnel. Close the window to terminate the tunnel.
+
+
+
+Or, edit your SSH config (%userprofile%\.ssh\config) to include a tunnel:
+Host <pnode-hostname>
+HostName <my.p.node.ip>
+User root
+IdentityFile %userprofile%.ssh\id_ed25519
+LocalForward 3000 localhost:3000
+LocalForward 4000 localhost:4000
+LocalForward 8000 localhost:8000
+
+
+
+
+Then connect with: ssh pnode
+
+
+
+Next Steps
+
+
+With the SSH tunnel and xandminer web GUI set up, you can remotely manage your pNode’s mining operations securely. Use the GUI to complement the command-line tools and monitoring scripts from previous chapters. 
+
+
+
+Register your pNode
+Setting Up an SSH Tunnel and Accessing the xandminer Web GUI
+To manage your pNode remotely and access the xandminer web-based graphical user interface (GUI) securely, you can set up an SSH tunnel using OpenSSH on Windows. This chapter guides you through creating an SSH tunnel to forward traffic from your local machine to the xandminer web GUI running on your pNode, ensuring secure and encrypted access.
+
+Prerequisites
+Before proceeding, ensure the following:
+
+You have SSH access to your pNode using your SSH key (as configured in the “SSH Key Setup” chapter).
+The xandminer and xandminerd services are installed, enabled, and running (as described in the “Starting and Monitoring xandminer Services” chapter).
+The xandminer web GUI is enabled and configured on your pNode.
+You have root privileges on your pNode.
+You have OpenSSH installed on your Windows machine. You can install it via Windows 10/11 Settings under “Optional Features” or through Windows Subsystem for Linux (WSL).
+Enabling the xandminer Web GUI
+Open an SSH tunnel that forwards the proper ports through the tunnel, ensure the xandminer service is enabled and running on your pNode:
+
+SSH into your pNode using OpenSSH on Windows:
+ssh -i %userprofile%\.ssh\id_ed25519 root@<my.p.node.ip> -L 4000:localhost:4000 -L 3000:localhost:3000
+Replace <my.p.node.ip> with your pNode’s IP address.
+port 3000 is for the GUI connection (http://localhost:3000)
+port 4000 is for the xandminerd connection
+Check if the xandminer and xandminerd services are installed and enabled:
+sudo systemctl status xandminer
+sudo systemctl status xandminerd
+If the service isn’t installed, refer to the xandminer installation instructions.
+Start and enable the xandminer services:
+sudo systemctl enable --now xandminer
+sudo systemctl enable --now xandminerd
+Verify the GUI is accessible locally on the opening a web browser on the remote Windows machine and navigating to http://localhost:3000.
+A sucessful connection will look like the screenshot below:
+
+﻿
+Connect your wallet
+Using Phantom wallet or Solflare wallet, connect your Manager wallet using the "Select Wallet" button, and choose your wallet that has purchased at least one pNode license.
+
+A manager can have up to 3 pNode licenses
+Each pNode will need its own ip address
+After your wallet is connected, generate a keypair on your pNode using the "Generate Identity Key-pair" button.
+
+﻿
+the keypair will be created on the pnode and the pubkey can be viewed in he Xandminer GUI
+Press on the pNode Identity Keypair button again to copy the pubkey to your clipboard
+Next, press the "register pNode" button to register your pNode onto the Xandeum Network
+
+Each pnode must be onboarded separatly using this form to be eligible for Devnet rewards.
+
+https://pnode-onboarding.paperform.co/
+
+pNode CLI Usage
+
+pod
+Starts the pnode with default configuration:
+
+
+pRPC server on 127.0.0.1:6000 (private)
+
+
+
+Stats server on 127.0.0.1:80 (private)
+
+
+
+Uses default bootstrap node for peer discovery
+
+
+
+
+pod --version
+# Output: pod 1.0.0
+
+pod --help
+# Shows complete usage information with all options and examples
+
+Xandeum pNode is a high-performance blockchain node that provides JSON-RPC API, 
+peer-to-peer communication via gossip protocol, and real-time statistics monitoring.
+
+PORTS:
+    6000    pRPC API (configurable IP binding)
+    80      Stats dashboard (localhost only)  
+    9001    Gossip protocol (peer communication)
+    5000    Atlas connection (outbound)
+
+DOCUMENTATION:
+    For complete documentation, visit /usr/share/doc/pod/ after installation
+
+Usage: pod [OPTIONS]
+
+Options:
+      --rpc-ip <IP_ADDRESS>
+          Set RPC server IP binding [default: 127.0.0.1 for private]
+          
+      --entrypoint <IP:PORT>
+          Bootstrap node for peer discovery [default: 173.212.207.32:9001]
+
+      --no-entrypoint
+          Disable peer discovery (run in isolation)
+
+      --atlas-ip <IP:PORT>
+          Atlas server address for data streaming [default: 95.217.229.171:5000]
+
+  -h, --help
+          Print help (see a summary with '-h')
+
+  -V, --version
+          Print version
+
+pNode pod Documentation
+
+Welcome to the documentation for Xandeum pNode - a high-performance blockchain node implementation.
+
+Quick Start
+
+
+
+Installation
+
+
+!!! info "Prerequisites"
+- A Linux server or VPS running Ubuntu/Debian
+- SSH access to your server
+- Basic command line knowledge
+
+
+Step 1: Access Your Server
+
+
+If you're using a VPS (Virtual Private Server), connect via SSH:
+
+
+
+Bash
+
+
+
+1ssh username@your-server-ip
+
+ssh username@your-server-ip
+
+/**
+ * Reset the text fill color so that placeholder is visible
+ */
+.npm__react-simple-code-editor__textarea:empty {
+  -webkit-text-fill-color: inherit !important;
+}
+
+/**
+ * Hack to apply on some CSS on IE10 and IE11
+ */
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  /**
+    * IE doesn't support '-webkit-text-fill-color'
+    * So we use 'color: transparent' to make the text transparent on IE
+    * Unlike other browsers, it doesn't affect caret color in IE
+    */
+  .npm__react-simple-code-editor__textarea {
+    color: transparent !important;
+  }
+
+  .npm__react-simple-code-editor__textarea::selection {
+    background-color: #accef7 !important;
+    color: transparent !important;
+  }
+}
+
+
+
+
+
+
+Once connected to your server, open a terminal window.
+
+
+Step 2: Add the Xandeum Repository
+
+
+First, install the required packages and add the Xandeum repository:
+
+
+
+Bash
+
+
+
+1# Install repository prerequisites
+2sudo apt-get install -y apt-transport-https ca-certificates
+3
+4# Add the Xandeum repository
+5echo "deb [trusted=yes] https://xandeum.github.io/pod-apt-package/ stable main" | sudo tee /etc/apt/sources.list.d/xandeum-pod.list
+6
+7# Update package list
+8sudo apt-get update
+
+# Install repository prerequisites
+sudo apt-get install -y apt-transport-https ca-certificates
+
+# Add the Xandeum repository
+echo "deb [trusted=yes] https://xandeum.github.io/pod-apt-package/ stable main" | sudo tee /etc/apt/sources.list.d/xandeum-pod.list
+
+# Update package list
+sudo apt-get update
+
+/**
+ * Reset the text fill color so that placeholder is visible
+ */
+.npm__react-simple-code-editor__textarea:empty {
+  -webkit-text-fill-color: inherit !important;
+}
+
+/**
+ * Hack to apply on some CSS on IE10 and IE11
+ */
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  /**
+    * IE doesn't support '-webkit-text-fill-color'
+    * So we use 'color: transparent' to make the text transparent on IE
+    * Unlike other browsers, it doesn't affect caret color in IE
+    */
+  .npm__react-simple-code-editor__textarea {
+    color: transparent !important;
+  }
+
+  .npm__react-simple-code-editor__textarea::selection {
+    background-color: #accef7 !important;
+    color: transparent !important;
+  }
+}
+
+
+
+
+
+
+Step 3: Install the pNode
+
+
+
+Bash
+
+
+
+1# Install the pod package
+2sudo apt-get install pod
+
+# Install the pod package
+sudo apt-get install pod
+
+/**
+ * Reset the text fill color so that placeholder is visible
+ */
+.npm__react-simple-code-editor__textarea:empty {
+  -webkit-text-fill-color: inherit !important;
+}
+
+/**
+ * Hack to apply on some CSS on IE10 and IE11
+ */
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  /**
+    * IE doesn't support '-webkit-text-fill-color'
+    * So we use 'color: transparent' to make the text transparent on IE
+    * Unlike other browsers, it doesn't affect caret color in IE
+    */
+  .npm__react-simple-code-editor__textarea {
+    color: transparent !important;
+  }
+
+  .npm__react-simple-code-editor__textarea::selection {
+    background-color: #accef7 !important;
+    color: transparent !important;
+  }
+}
+
+
+
+
+
+
+!!! tip "Verify Installation"
+After installation completes, you can verify it was successful by checking the version:
+bash
+    pod --version
+    
+
+
+
+Basic Usage
+
+
+
+Bash
+
+
+
+1# Start with default settings (private pRPC)
+2pod
+3
+4# Start with public pRPC access
+5pod --rpc-ip 0.0.0.0
+6
+7# Check version
+8pod --version
+9
+10# Get help
+11pod --help
+
+# Start with default settings (private pRPC)
+pod
+
+# Start with public pRPC access
+pod --rpc-ip 0.0.0.0
+
+# Check version
+pod --version
+
+# Get help
+pod --help
+
+/**
+ * Reset the text fill color so that placeholder is visible
+ */
+.npm__react-simple-code-editor__textarea:empty {
+  -webkit-text-fill-color: inherit !important;
+}
+
+/**
+ * Hack to apply on some CSS on IE10 and IE11
+ */
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  /**
+    * IE doesn't support '-webkit-text-fill-color'
+    * So we use 'color: transparent' to make the text transparent on IE
+    * Unlike other browsers, it doesn't affect caret color in IE
+    */
+  .npm__react-simple-code-editor__textarea {
+    color: transparent !important;
+  }
+
+  .npm__react-simple-code-editor__textarea::selection {
+    background-color: #accef7 !important;
+    color: transparent !important;
+  }
+}
+
+
+
+
+
+
+
+Test Your Setup
+
+
+Verify your pNode is running correctly:
+
+
+
+Bash
+
+
+
+1curl -X POST http://127.0.0.1:6000/rpc \
+2  -H "Content-Type: application/json" \
+3  -d '{
+4    "jsonrpc": "2.0",
+5    "method": "get-version",
+6    "id": 1
+7  }'
+
+curl -X POST http://127.0.0.1:6000/rpc \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "get-version",
+    "id": 1
+  }'
+
+/**
+ * Reset the text fill color so that placeholder is visible
+ */
+.npm__react-simple-code-editor__textarea:empty {
+  -webkit-text-fill-color: inherit !important;
+}
+
+/**
+ * Hack to apply on some CSS on IE10 and IE11
+ */
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  /**
+    * IE doesn't support '-webkit-text-fill-color'
+    * So we use 'color: transparent' to make the text transparent on IE
+    * Unlike other browsers, it doesn't affect caret color in IE
+    */
+  .npm__react-simple-code-editor__textarea {
+    color: transparent !important;
+  }
+
+  .npm__react-simple-code-editor__textarea::selection {
+    background-color: #accef7 !important;
+    color: transparent !important;
+  }
+}
+
+
+
+
+
+
+!!! success "Expected Response"
+If everything is working, you should see a JSON response with the version number:
+json
+    {
+      "jsonrpc": "2.0",
+      "result": {
+        "version": "0.4.2"
+      },
+      "id": 1
+    }
+    
+
+
+
+What's Included
+
+
+
+🔌 pRPC API
+
+
+Complete JSON-RPC 2.0 API for interacting with your pnode:
+
+
+get-version: Get pnode software version
+
+
+
+get-stats: Retrieve comprehensive pnode statistics
+
+
+
+get-pods: List known peer pnodes in the network
+
+
+
+View pRPC API Documentation
+{ .md-button .md-button--primary }
+
+
+
+⚙️ pNode CLI Usage
+
+
+Comprehensive command-line reference:
+
+
+--rpc-ip: Configure pRPC server IP binding
+
+
+
+--entrypoint: Set bootstrap node for peer discovery
+
+
+
+--atlas-ip: Configure Atlas server connection
+
+
+
+And more...
+
+
+
+View CLI Documentation
+{ .md-button .md-button--primary }
+
+
+
+Architecture Overview
+
+
+The Xandeum pNode consists of several key components:
+
+
+pRPC Server: JSON-RPC API on port 6000 (configurable IP)
+
+
+
+Stats Dashboard: Web interface on port 80 (localhost only)
+
+
+
+Gossip Protocol: Peer-to-peer communication on port 9001
+
+
+
+Atlas Client: Data streaming connection on port 5000
+
+
+
+
+Default Configuration
+
+
+Service
+
+
+
+Port
+
+
+
+Access
+
+
+
+Configurable
+
+
+
+pRPC API
+
+
+
+6000
+
+
+
+Private (127.0.0.1)
+
+
+
+IP only
+
+
+
+Stats Dashboard
+
+
+
+80
+
+
+
+Private (127.0.0.1)
+
+
+
+No
+
+
+
+Gossip Protocol
+
+
+
+9001
+
+
+
+All interfaces
+
+
+
+No
+
+
+
+Atlas Connection
+
+
+
+5000
+
+
+
+Fixed endpoint
+
+
+
+No
+
+
+
+
+
+
+
+
+!!! tip "Security by Default"
+The pnode is configured to be secure by default - pRPC API is private unless explicitly configured otherwise.
+
+
+
+pNode RPC (pRPC) Reference
+Complete reference for all JSON-RPC 2.0 methods available in Xandeum pNode.
+The Xandeum pNode pRPC API uses JSON-RPC 2.0 protocol over HTTP POST requests. All requests should be sent to the /prpc endpoint.
+
+
+!!! info "Base URL"
+http://<pnode-ip>:6000/rpc
+
+
+**Default**: `http://127.0.0.1:6000/rpc` (private)
+
+Network Architecture
+
+
+The pnode uses several network ports for different services:
+
+
+Port 6000: pRPC API server (configurable IP binding)
+
+
+
+Port 80: Statistics dashboard (localhost only)
+
+
+
+Port 9001: Gossip protocol for peer discovery and communication
+
+
+
+Port 5000: Atlas server connection for data streaming (fixed endpoint)
+
+
+
+Availabe Methods
+=== "get-version"
+Returns the current version of the pnode software.
+
+### Request
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "get-version",
+  "id": 1
+}
+```
+
+### Response
+```json
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "version": "1.0.0"
+  },
+  "id": 1
+}
+```
+
+### cURL Example
+```bash
+curl -X POST http://127.0.0.1:6000/rpc \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "get-version",
+    "id": 1
+  }'
+```
+
+
+=== "get-stats"
+Returns comprehensive statistics about the pnode including system metrics, storage info, and network activity.
+
+### Request
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "get-stats",
+  "id": 1
+}
+```
+
+### Response
+```json
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "metadata": {
+      "total_bytes": 1048576000,
+      "total_pages": 1000,
+      "last_updated": 1672531200
+    },
+    "stats": {
+      "cpu_percent": 15.5,
+      "ram_used": 536870912,
+      "ram_total": 8589934592,
+      "uptime": 86400,
+      "packets_received": 1250,
+      "packets_sent": 980,
+      "active_streams": 5
+    },
+    "file_size": 1048576000
+  },
+  "id": 1
+}
+```
+
+### Response Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `metadata.total_bytes` | number | Total bytes processed |
+| `metadata.total_pages` | number | Total pages in storage |
+| `metadata.last_updated` | number | Unix timestamp of last update |
+| `stats.cpu_percent` | number | Current CPU usage percentage |
+| `stats.ram_used` | number | RAM used in bytes |
+| `stats.ram_total` | number | Total RAM available in bytes |
+| `stats.uptime` | number | Uptime in seconds |
+| `stats.packets_received` | number | Packets received per second |
+| `stats.packets_sent` | number | Packets sent per second |
+| `stats.active_streams` | number | Number of active network streams |
+| `file_size` | number | Storage file size in bytes |
+
+
+
+=== "get-pods"
+
+Returns a list of all known peer pnodes in the network with their status information.
+
+### Request
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "get-pods",
+  "id": 1
+}
+```
+
+### Response
+```json
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "pods": [
+      {
+        "address": "192.168.1.100:9001",
+        "version": "1.0.0",
+        "last_seen": "2023-12-01 14:30:00 UTC",
+        "last_seen_timestamp": 1672574200
+      },
+      {
+        "address": "10.0.0.5:9001",
+        "version": "1.0.1",
+        "last_seen": "2023-12-01 14:25:00 UTC",
+        "last_seen_timestamp": 1672573900
+      }
+    ],
+    "total_count": 2
+  },
+  "id": 1
+}
+```
+
+### Pod Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `address` | string | IP address and port of the peer pnode |
+| `version` | string | Software version of the peer pnode |
+| `last_seen` | string | Human-readable timestamp of last contact |
+| `last_seen_timestamp` | number | Unix timestamp of last contact |
+| `total_count` | number | Total number of known pnodes |
+
+
+
+Error Handling
+All errors follow the JSON-RPC 2.0 specification and include standard error codes.
+
+{
+  "jsonrpc": "2.0",
+  "error": {
+    "code": -32601,
+    "message": "Method not found"
+  },
+  "id": 1
+}
+
+Internal Error
+{
+  "jsonrpc": "2.0",
+  "error": {
+    "code": -32603,
+    "message": "Internal error"
+  },
+  "id": 1
+}
+
+Intergration Example
+const fetch = require('node-fetch');
+
+async function callPRPC(method, params = null) {
+  const payload = {
+    jsonrpc: "2.0",
+    method: method,
+    id: 1
+  };
+  if (params) payload.params = params;
+
+  const response = await fetch('http://127.0.0.1:6000/rpc', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  
+  return await response.json();
+}
+
+// Usage
+(async () => {
+  const version = await callPRPC('get-version');
+  console.log(`pNode version: ${version.result.version}`);
+  
+  const stats = await callPRPC('get-stats');
+  console.log(`Uptime: ${stats.result.stats.uptime} seconds`);
+})();
+
+
+!!! tip "Installation"
+Install the pod via apt: sudo apt install pod
+
+
+!!! tip "Rate Limiting"
+There are currently no rate limits on the pRPC API, but be mindful of resource usage when making frequent requests.
+
+
+!!! warning "Security"
+When using --rpc-ip 0.0.0.0, your pRPC API will be accessible from any network interface. Ensure proper firewall rules are in place.
+
+
+
+
+
+
+
+
+
