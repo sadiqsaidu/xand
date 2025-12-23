@@ -49,3 +49,8 @@ coverage/
 # OS
 Thumbs.db
 Desktop.ini
+
+# Project-specific
+Xandeum.txt
+*.txt
+!README.md
