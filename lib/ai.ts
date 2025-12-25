@@ -2,7 +2,7 @@ import OpenAI from "openai";
 
 // OpenRouter Configuration
 const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1";
-const MODEL = "meta-llama/llama-3-8b-instruct:free";
+const MODEL = "meta-llama/llama-3.2-3b-instruct:free";
 
 // Initialize OpenAI client pointing to OpenRouter
 export const openai = new OpenAI({
@@ -28,6 +28,11 @@ export interface SearchFilter {
   max_cpu_percent?: number;
   min_health_score?: number;
   version?: string;
+}
+
+export interface QueryResult {
+  answer: string;
+  data_used: Record<string, any>;
 }
 
 export interface DiagnosisResult {
@@ -118,3 +123,27 @@ Rules:
 4. Keep each bullet under 100 characters
 5. Be factual, not speculative
 6. Return ONLY valid JSON`;
+
+export const QUERY_SYSTEM_PROMPT = `You are an AI assistant for the Xandeum network monitoring dashboard. Answer user questions about the network based ONLY on the provided real-time data.
+
+You will be given current network statistics including:
+- Total nodes, online/offline counts
+- Geographic distribution (countries)
+- Health scores and performance metrics
+- Version distribution
+
+Answer questions directly and concisely. Include specific numbers when available.
+
+Examples of questions you can answer:
+- "How many nodes are in Nigeria?" → Look at the countries data
+- "What's the network health?" → Report the network score and online percentage
+- "Which country has the most nodes?" → Find the top country from the data
+- "Are there any critical nodes?" → Check health distribution
+
+Rules:
+1. ONLY use data provided to you - never invent statistics
+2. If the data doesn't contain the answer, say so clearly
+3. Be concise but informative
+4. Include relevant numbers
+5. Don't speculate about data you don't have`;
+

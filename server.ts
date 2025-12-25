@@ -10,6 +10,7 @@ import {
   SEARCH_SYSTEM_PROMPT, 
   DIAGNOSE_SYSTEM_PROMPT, 
   BRIEFING_SYSTEM_PROMPT,
+  QUERY_SYSTEM_PROMPT,
   SearchFilter,
   DiagnosisResult,
   BriefingResult
@@ -59,10 +60,10 @@ const StatsSchema = z.object({
   packets_received: z.number().optional().default(0),
   packets_sent: z.number().optional().default(0),
   
-  // Storage Metrics
-  file_size: z.number().optional().default(0),        // Used storage in bytes
-  total_bytes: z.number().optional().default(0),       // Total data tracked
-  total_pages: z.number().optional().default(0),       // Storage capacity indicator
+  // Storage Metrics - Note: total_pages represents storage capacity units
+  file_size: z.number().optional().default(0),        // Current data stored
+  total_bytes: z.number().optional().default(0),       // Total bytes tracked in current session
+  total_pages: z.number().optional().default(0),       // Storage pages allocated
   current_index: z.number().optional().default(0),
   
   // Hardware Metrics
@@ -73,6 +74,11 @@ const StatsSchema = z.object({
   // System
   uptime: z.number().optional().default(0),
   last_updated: z.number().optional(),
+  
+  // Additional fields some nodes may report
+  disk_total: z.number().optional(),
+  disk_used: z.number().optional(),
+  disk_free: z.number().optional(),
 });
 
 type NodeStats = z.infer<typeof StatsSchema>;
@@ -116,13 +122,8 @@ function formatUptime(seconds: number): string {
 }
 
 // Calculate derived metrics for a node
-function calculateDerivedMetrics(stats: NodeStats | null, uptimeForRate: number = 1): EnrichedNode["derived"] {
+function calculateDerivedMetrics(stats: NodeStats | null, isOnline: boolean = true): EnrichedNode["derived"] {
   if (!stats) return null;
-  
-  // Storage utilization (file_size / total_bytes, capped at 100%)
-  const storageUtil = stats.total_bytes > 0 
-    ? Math.min((stats.file_size / stats.total_bytes) * 100, 100) 
-    : 0;
   
   // RAM usage percentage
   const ramUsage = stats.ram_total > 0 
@@ -133,18 +134,46 @@ function calculateDerivedMetrics(stats: NodeStats | null, uptimeForRate: number 
   const totalPackets = stats.packets_sent + stats.packets_received;
   const packetsPerSec = stats.uptime > 0 ? totalPackets / stats.uptime : 0;
   
-  // Health score (composite: lower CPU is better, RAM under 80% is good, uptime matters)
-  let healthScore = 100;
-  if (stats.cpu_percent > 80) healthScore -= 30;
-  else if (stats.cpu_percent > 50) healthScore -= 10;
-  if (ramUsage > 90) healthScore -= 30;
-  else if (ramUsage > 70) healthScore -= 10;
-  if (stats.uptime < 3600) healthScore -= 20; // Less than 1 hour uptime
-  if (stats.active_streams > 0) healthScore += 5; // Bonus for active work
+  // Health score calculation - more nuanced scoring
+  let healthScore = 0;
+  
+  if (!isOnline) {
+    // Offline nodes get 0 health
+    healthScore = 0;
+  } else {
+    // Start with base score for being online
+    healthScore = 50;
+    
+    // CPU scoring (up to +20 points)
+    if (stats.cpu_percent <= 30) healthScore += 20;
+    else if (stats.cpu_percent <= 50) healthScore += 15;
+    else if (stats.cpu_percent <= 70) healthScore += 10;
+    else if (stats.cpu_percent <= 85) healthScore += 5;
+    // Above 85% = 0 additional points
+    
+    // RAM scoring (up to +15 points)
+    if (ramUsage <= 50) healthScore += 15;
+    else if (ramUsage <= 70) healthScore += 10;
+    else if (ramUsage <= 85) healthScore += 5;
+    // Above 85% = 0 additional points
+    
+    // Uptime scoring (up to +15 points)
+    const uptimeHours = stats.uptime / 3600;
+    if (uptimeHours >= 168) healthScore += 15; // 7+ days
+    else if (uptimeHours >= 72) healthScore += 12; // 3+ days
+    else if (uptimeHours >= 24) healthScore += 8; // 1+ day
+    else if (uptimeHours >= 1) healthScore += 4; // 1+ hour
+    // Less than 1 hour = 0 additional points
+    
+    // Network activity bonus (optional, shows node is working)
+    if (stats.active_streams > 0) healthScore = Math.min(healthScore + 2, 100);
+    if (totalPackets > 1000) healthScore = Math.min(healthScore + 3, 100);
+  }
+  
   healthScore = Math.max(0, Math.min(100, healthScore));
   
   return {
-    storage_utilization_percent: Math.round(storageUtil * 100) / 100,
+    storage_utilization_percent: 0, // We'll calculate network-wide storage differently
     ram_usage_percent: Math.round(ramUsage * 100) / 100,
     uptime_human: formatUptime(stats.uptime),
     packets_per_second: Math.round(packetsPerSec * 100) / 100,
@@ -238,7 +267,7 @@ async function runCrawler() {
     }
 
     const pods = parsed.data.pods;
-    console.log(`📋 Crawler: Found ${pods.length} nodes.`);
+    console.log(`📋 Crawler: Found ${pods.length} nodes in gossip.`);
 
     // 2. Identify New IPs needing Geolocation
     const ipsToGeolocate: string[] = [];
@@ -257,27 +286,54 @@ async function runCrawler() {
       newGeoMap = await fetchGeoBatch(ipsToGeolocate);
     }
 
-    // 4. Update Cache (Probe & Merge Data)
-    // Probe up to 100 nodes for more coverage
-    const nodesToProbe = pods.slice(0, 100); 
+    // 4. Probe ALL nodes in parallel batches for better coverage
+    const BATCH_SIZE = 50; // Probe 50 nodes at a time
+    const allResults: { pod: typeof pods[0]; success: boolean; stats: NodeStats | null }[] = [];
     
-    for (const pod of nodesToProbe) {
+    console.log(`🔍 Crawler: Probing all ${pods.length} nodes...`);
+    
+    for (let i = 0; i < pods.length; i += BATCH_SIZE) {
+      const batch = pods.slice(i, i + BATCH_SIZE);
+      const batchPromises = batch.map(async (pod) => {
+        const ip = pod.address.split(':')[0];
+        if (!ip) return { pod, success: false, stats: null };
+        
+        const rpcUrl = `http://${ip}:6000/rpc`;
+        try {
+          const rawStats = await callPrpc<unknown>("get-stats", [], rpcUrl);
+          const parsedStats = StatsSchema.safeParse(rawStats);
+          return { 
+            pod, 
+            success: true, 
+            stats: parsedStats.success ? parsedStats.data : null 
+          };
+        } catch {
+          return { pod, success: false, stats: null };
+        }
+      });
+      
+      const batchResults = await Promise.all(batchPromises);
+      allResults.push(...batchResults);
+      
+      // Progress log
+      console.log(`   Probed ${Math.min(i + BATCH_SIZE, pods.length)}/${pods.length} nodes...`);
+    }
+
+    // 5. Update Cache with all results
+    let onlineCount = 0;
+    let offlineCount = 0;
+    
+    for (const result of allResults) {
+      const pod = result.pod;
       const ip = pod.address.split(':')[0];
       if (!ip) continue;
-
-      // Preserve existing geo if we didn't fetch new one
+      
+      // Get geo from new fetch or existing cache
       const existing = nodeCache.get(ip);
       const geo = newGeoMap.get(ip) || existing?.geo || null;
-
-      const rpcUrl = `http://${ip}:6000/rpc`; 
       
-      try {
-        const rawStats = await callPrpc<unknown>("get-stats", [], rpcUrl);
-        const parsedStats = StatsSchema.safeParse(rawStats);
-        
-        const stats = parsedStats.success ? parsedStats.data : null;
-        const derived = calculateDerivedMetrics(stats);
-        
+      if (result.success && result.stats) {
+        const derived = calculateDerivedMetrics(result.stats, true);
         const enrichedNode: EnrichedNode = {
           ip,
           address: pod.address,
@@ -286,15 +342,14 @@ async function runCrawler() {
           status: "Online",
           lastSeen: new Date(),
           lastSeenTimestamp: pod.last_seen_timestamp || null,
-          stats,
+          stats: result.stats,
           geo,
           derived,
         };
-        
         nodeCache.set(ip, enrichedNode);
-
-      } catch (err) {
-        // Even if offline, we update the record (and keep the geo!)
+        onlineCount++;
+      } else {
+        // Node is offline but in gossip
         const offlineNode: EnrichedNode = {
           ip,
           address: pod.address,
@@ -305,13 +360,14 @@ async function runCrawler() {
           lastSeenTimestamp: pod.last_seen_timestamp || existing?.lastSeenTimestamp || null,
           stats: existing?.stats || null,
           geo,
-          derived: existing?.derived || null,
+          derived: existing?.derived ? { ...existing.derived, health_score: 0 } : null,
         };
         nodeCache.set(ip, offlineNode);
+        offlineCount++;
       }
     }
 
-    // Mark nodes not in current gossip as potentially stale
+    // 6. Mark nodes not in current gossip as Unknown
     const currentIps = new Set(pods.map(p => p.address.split(':')[0]));
     nodeCache.forEach((node, ip) => {
       if (!currentIps.has(ip) && node.status === "Online") {
@@ -320,7 +376,7 @@ async function runCrawler() {
     });
 
     lastSyncTime = new Date();
-    console.log(`✅ Crawler: Sync complete. Cached ${nodeCache.size} nodes.`);
+    console.log(`✅ Crawler: Sync complete. ${onlineCount} online, ${offlineCount} offline. Total cached: ${nodeCache.size}`);
 
   } catch (err: any) {
     console.error("❌ Crawler Error:", err?.message || err);
@@ -342,20 +398,33 @@ app.get("/pnodes", (c) => {
   const offlineNodes = nodes.filter(n => n.status === "Offline");
   const unknownNodes = nodes.filter(n => n.status === "Unknown");
   
-  // Aggregate network-wide storage metrics
-  const totalStorageUsed = nodes.reduce((acc, n) => acc + (n.stats?.file_size || 0), 0);
-  const totalStorageCapacity = nodes.reduce((acc, n) => acc + (n.stats?.total_bytes || 0), 0);
+  // Calculate network-wide RAM (this is meaningful - total RAM capacity of the network)
+  const totalRamBytes = onlineNodes.reduce((acc, n) => acc + (n.stats?.ram_total || 0), 0);
+  const usedRamBytes = onlineNodes.reduce((acc, n) => acc + (n.stats?.ram_used || 0), 0);
+  
+  // Network traffic aggregates
   const totalPacketsSent = nodes.reduce((acc, n) => acc + (n.stats?.packets_sent || 0), 0);
   const totalPacketsReceived = nodes.reduce((acc, n) => acc + (n.stats?.packets_received || 0), 0);
-  const avgCpu = onlineNodes.length > 0 
-    ? onlineNodes.reduce((acc, n) => acc + (n.stats?.cpu_percent || 0), 0) / onlineNodes.length 
+  
+  // Average metrics (only from online nodes with stats)
+  const nodesWithStats = onlineNodes.filter(n => n.stats);
+  const avgCpu = nodesWithStats.length > 0 
+    ? nodesWithStats.reduce((acc, n) => acc + (n.stats?.cpu_percent || 0), 0) / nodesWithStats.length 
     : 0;
-  const avgRam = onlineNodes.length > 0
-    ? onlineNodes.reduce((acc, n) => acc + (n.derived?.ram_usage_percent || 0), 0) / onlineNodes.length
+  const avgRam = nodesWithStats.length > 0
+    ? nodesWithStats.reduce((acc, n) => acc + (n.derived?.ram_usage_percent || 0), 0) / nodesWithStats.length
     : 0;
   const avgHealthScore = onlineNodes.length > 0
     ? onlineNodes.reduce((acc, n) => acc + (n.derived?.health_score || 0), 0) / onlineNodes.length
     : 0;
+  
+  // Calculate average uptime
+  const avgUptimeSeconds = nodesWithStats.length > 0
+    ? nodesWithStats.reduce((acc, n) => acc + (n.stats?.uptime || 0), 0) / nodesWithStats.length
+    : 0;
+  
+  // Get total pages across network (storage capacity indicator)
+  const totalPages = nodes.reduce((acc, n) => acc + (n.stats?.total_pages || 0), 0);
   
   return c.json({
     meta: {
@@ -364,15 +433,20 @@ app.get("/pnodes", (c) => {
       offline_nodes: offlineNodes.length,
       unknown_nodes: unknownNodes.length,
       last_sync: lastSyncTime,
-      // Storage aggregates
-      storage: {
-        total_used_bytes: totalStorageUsed,
-        total_capacity_bytes: totalStorageCapacity,
-        total_used_human: formatBytes(totalStorageUsed),
-        total_capacity_human: formatBytes(totalStorageCapacity),
-        utilization_percent: totalStorageCapacity > 0 
-          ? Math.round((totalStorageUsed / totalStorageCapacity) * 10000) / 100 
+      // RAM aggregates (this makes sense as actual network capacity)
+      ram: {
+        total_bytes: totalRamBytes,
+        used_bytes: usedRamBytes,
+        total_human: formatBytes(totalRamBytes),
+        used_human: formatBytes(usedRamBytes),
+        utilization_percent: totalRamBytes > 0 
+          ? Math.round((usedRamBytes / totalRamBytes) * 10000) / 100 
           : 0,
+      },
+      // Storage capacity (using total_pages as indicator)
+      storage: {
+        total_pages: totalPages,
+        nodes_reporting: nodesWithStats.length,
       },
       // Network traffic aggregates
       traffic: {
@@ -385,6 +459,8 @@ app.get("/pnodes", (c) => {
         avg_cpu_percent: Math.round(avgCpu * 100) / 100,
         avg_ram_percent: Math.round(avgRam * 100) / 100,
         avg_health_score: Math.round(avgHealthScore),
+        avg_uptime_seconds: Math.round(avgUptimeSeconds),
+        avg_uptime_human: formatUptime(avgUptimeSeconds),
       },
     },
     nodes: nodes.map(n => ({
@@ -393,9 +469,9 @@ app.get("/pnodes", (c) => {
       stats_formatted: n.stats ? {
         cpu: `${(n.stats.cpu_percent || 0).toFixed(1)}%`,
         ram: `${formatBytes(n.stats.ram_used || 0)} / ${formatBytes(n.stats.ram_total || 0)}`,
-        storage: `${formatBytes(n.stats.file_size || 0)} / ${formatBytes(n.stats.total_bytes || 0)}`,
         uptime: n.derived?.uptime_human || "N/A",
         packets: `↑${(n.stats.packets_sent || 0).toLocaleString()} ↓${(n.stats.packets_received || 0).toLocaleString()}`,
+        pages: n.stats.total_pages || 0,
       } : null,
     })),
   });
@@ -449,6 +525,7 @@ app.get("/pnodes/:ip", (c) => {
 app.get("/stats", (c) => {
   const nodes = Array.from(nodeCache.values());
   const onlineNodes = nodes.filter(n => n.status === "Online");
+  const nodesWithStats = onlineNodes.filter(n => n.stats);
   
   // Version distribution
   const versionCounts: Record<string, number> = {};
@@ -472,39 +549,77 @@ app.get("/stats", (c) => {
       countryCounts[n.geo.country] = (countryCounts[n.geo.country] || 0) + 1;
     }
     
-    // Health buckets
-    const health = n.derived?.health_score || 0;
-    if (health >= 80) healthBuckets.Excellent++;
-    else if (health >= 60) healthBuckets.Good++;
-    else if (health >= 40) healthBuckets.Fair++;
-    else healthBuckets.Poor++;
+    // Health buckets (only for online nodes)
+    if (n.status === "Online") {
+      const health = n.derived?.health_score || 0;
+      if (health >= 80) healthBuckets.Excellent++;
+      else if (health >= 60) healthBuckets.Good++;
+      else if (health >= 40) healthBuckets.Fair++;
+      else healthBuckets.Poor++;
+    }
   });
 
-  // Bootstrap node stats
-  const bootstrapNode = nodes.find(n => n.address.includes("173.212.207.32"));
+  // Calculate network uptime (average of all online nodes)
+  const avgUptimeSeconds = nodesWithStats.length > 0
+    ? nodesWithStats.reduce((acc, n) => acc + (n.stats?.uptime || 0), 0) / nodesWithStats.length
+    : 0;
   
-  // Network-wide aggregates
-  const totalStorageUsed = nodes.reduce((acc, n) => acc + (n.stats?.file_size || 0), 0);
-  const totalStorageCapacity = nodes.reduce((acc, n) => acc + (n.stats?.total_bytes || 0), 0);
+  // Calculate max uptime (longest running node)
+  const maxUptimeSeconds = nodesWithStats.length > 0
+    ? Math.max(...nodesWithStats.map(n => n.stats?.uptime || 0))
+    : 0;
+  
+  // Network RAM totals
+  const totalRamBytes = nodesWithStats.reduce((acc, n) => acc + (n.stats?.ram_total || 0), 0);
+  const usedRamBytes = nodesWithStats.reduce((acc, n) => acc + (n.stats?.ram_used || 0), 0);
+  
+  // Average metrics
+  const avgCpu = nodesWithStats.length > 0
+    ? nodesWithStats.reduce((acc, n) => acc + (n.stats?.cpu_percent || 0), 0) / nodesWithStats.length
+    : 0;
+  const avgRamPercent = nodesWithStats.length > 0
+    ? nodesWithStats.reduce((acc, n) => acc + (n.derived?.ram_usage_percent || 0), 0) / nodesWithStats.length
+    : 0;
+  const avgHealthScore = onlineNodes.length > 0
+    ? onlineNodes.reduce((acc, n) => acc + (n.derived?.health_score || 0), 0) / onlineNodes.length
+    : 0;
+  
+  // Network score (composite of online ratio + average health)
+  const onlineRatio = nodes.length > 0 ? (onlineNodes.length / nodes.length) * 100 : 0;
+  const networkScore = Math.round((onlineRatio * 0.5) + (avgHealthScore * 0.5));
 
   return c.json({
     network: {
       total_nodes: nodes.length,
       online_nodes: onlineNodes.length,
-      unique_ips: nodes.length,
+      offline_nodes: statusCounts.Offline,
+      unknown_nodes: statusCounts.Unknown,
+      online_percent: Math.round(onlineRatio * 10) / 10,
+      network_score: networkScore,
+      unique_countries: Object.keys(countryCounts).length,
+      unique_versions: Object.keys(versionCounts).length,
       last_sync: lastSyncTime,
     },
-    storage: {
-      total_used_bytes: totalStorageUsed,
-      total_capacity_bytes: totalStorageCapacity,
-      total_used_human: formatBytes(totalStorageUsed),
-      total_capacity_human: formatBytes(totalStorageCapacity),
-      utilization_percent: totalStorageCapacity > 0 
-        ? Math.round((totalStorageUsed / totalStorageCapacity) * 10000) / 100 
+    uptime: {
+      avg_seconds: Math.round(avgUptimeSeconds),
+      avg_human: formatUptime(avgUptimeSeconds),
+      max_seconds: maxUptimeSeconds,
+      max_human: formatUptime(maxUptimeSeconds),
+    },
+    ram: {
+      total_bytes: totalRamBytes,
+      used_bytes: usedRamBytes,
+      total_human: formatBytes(totalRamBytes),
+      used_human: formatBytes(usedRamBytes),
+      utilization_percent: totalRamBytes > 0 
+        ? Math.round((usedRamBytes / totalRamBytes) * 10000) / 100 
         : 0,
     },
-    bootstrap: bootstrapNode?.stats || null,
-    bootstrap_derived: bootstrapNode?.derived || null,
+    performance: {
+      avg_cpu_percent: Math.round(avgCpu * 100) / 100,
+      avg_ram_percent: Math.round(avgRamPercent * 100) / 100,
+      avg_health_score: Math.round(avgHealthScore),
+    },
     versions: versionCounts,
     status_distribution: statusCounts,
     countries: countryCounts,
@@ -516,14 +631,14 @@ app.get("/stats", (c) => {
 // AI-POWERED ENDPOINTS
 // ===========================
 
-// Part 1: Magic Search - Natural Language Filtering
+// Part 1: Magic Search - Natural Language Filtering with Results
 app.post("/ai/search", async (c) => {
   try {
     const body = await c.req.json();
     const query = body.query?.trim();
 
     if (!query) {
-      return c.json({ filter: {}, message: "Empty query" });
+      return c.json({ filter: {}, message: "Empty query", results: [] });
     }
 
     console.log(`🔮 AI Search: "${query}"`);
@@ -550,15 +665,196 @@ app.post("/ai/search", async (c) => {
       }
     } catch (parseErr) {
       console.error("❌ AI Search: Failed to parse response:", responseText);
-      return c.json({ filter: {}, message: "Could not understand query", raw: responseText });
+      return c.json({ filter: {}, message: "Could not understand query", raw: responseText, results: [] });
     }
 
-    console.log(`✅ AI Search: Parsed filter:`, filter);
-    return c.json({ filter, query, message: "Filter generated successfully" });
+    // Apply filters to cached nodes and return summary
+    const allNodes = Array.from(nodeCache.values());
+    let filteredNodes = [...allNodes];
+    
+    if (filter.country) {
+      filteredNodes = filteredNodes.filter(n => 
+        n.geo?.country?.toLowerCase().includes(filter.country!.toLowerCase())
+      );
+    }
+    if (filter.status) {
+      filteredNodes = filteredNodes.filter(n => n.status === filter.status);
+    }
+    if (filter.min_health_score) {
+      filteredNodes = filteredNodes.filter(n => (n.derived?.health_score || 0) >= filter.min_health_score!);
+    }
+    if (filter.min_ram_gb) {
+      const minBytes = filter.min_ram_gb * 1024 * 1024 * 1024;
+      filteredNodes = filteredNodes.filter(n => (n.stats?.ram_total || 0) >= minBytes);
+    }
+    if (filter.max_cpu_percent) {
+      filteredNodes = filteredNodes.filter(n => (n.stats?.cpu_percent || 0) <= filter.max_cpu_percent!);
+    }
+    if (filter.version) {
+      filteredNodes = filteredNodes.filter(n => 
+        n.version?.toLowerCase().includes(filter.version!.toLowerCase())
+      );
+    }
+    
+    // Generate a summary of results
+    const onlineCount = filteredNodes.filter(n => n.status === "Online").length;
+    const offlineCount = filteredNodes.filter(n => n.status === "Offline").length;
+    const avgHealth = filteredNodes.length > 0 
+      ? filteredNodes.reduce((acc, n) => acc + (n.derived?.health_score || 0), 0) / filteredNodes.length 
+      : 0;
+    
+    // Get country breakdown if not filtering by country
+    const countryBreakdown: Record<string, number> = {};
+    filteredNodes.forEach(n => {
+      if (n.geo?.country) {
+        countryBreakdown[n.geo.country] = (countryBreakdown[n.geo.country] || 0) + 1;
+      }
+    });
+
+    console.log(`✅ AI Search: Found ${filteredNodes.length} nodes matching filter`);
+    return c.json({ 
+      filter, 
+      query, 
+      message: "Filter generated successfully",
+      summary: {
+        total_matches: filteredNodes.length,
+        online: onlineCount,
+        offline: offlineCount,
+        avg_health_score: Math.round(avgHealth),
+        countries: countryBreakdown,
+      },
+      // Return first 10 matching IPs for quick reference
+      sample_nodes: filteredNodes.slice(0, 10).map(n => ({
+        ip: n.ip,
+        country: n.geo?.country || "Unknown",
+        status: n.status,
+        health_score: n.derived?.health_score || 0,
+      })),
+    });
 
   } catch (err: any) {
     console.error("❌ AI Search Error:", err?.message || err);
-    return c.json({ filter: {}, error: err?.message || "AI service unavailable" }, 500);
+    return c.json({ filter: {}, error: err?.message || "AI service unavailable", results: [] }, 500);
+  }
+});
+
+// Part 1b: AI Query - Direct Q&A about the network
+app.post("/ai/query", async (c) => {
+  try {
+    const body = await c.req.json();
+    const question = body.question?.trim();
+
+    if (!question) {
+      return c.json({ answer: "Please ask a question about the network.", error: true });
+    }
+
+    console.log(`❓ AI Query: "${question}"`);
+
+    // Gather all current network data to provide context
+    const allNodes = Array.from(nodeCache.values());
+    const onlineNodes = allNodes.filter(n => n.status === "Online");
+    const offlineNodes = allNodes.filter(n => n.status === "Offline");
+    
+    // Country breakdown
+    const countryCounts: Record<string, number> = {};
+    allNodes.forEach(n => {
+      if (n.geo?.country) {
+        countryCounts[n.geo.country] = (countryCounts[n.geo.country] || 0) + 1;
+      }
+    });
+    const sortedCountries = Object.entries(countryCounts)
+      .sort(([, a], [, b]) => b - a);
+    
+    // Version breakdown
+    const versionCounts: Record<string, number> = {};
+    allNodes.forEach(n => {
+      const v = n.version || "Unknown";
+      versionCounts[v] = (versionCounts[v] || 0) + 1;
+    });
+    
+    // Health distribution
+    const healthDist = { excellent: 0, good: 0, fair: 0, poor: 0 };
+    onlineNodes.forEach(n => {
+      const h = n.derived?.health_score || 0;
+      if (h >= 80) healthDist.excellent++;
+      else if (h >= 60) healthDist.good++;
+      else if (h >= 40) healthDist.fair++;
+      else healthDist.poor++;
+    });
+    
+    // Average metrics
+    const nodesWithStats = onlineNodes.filter(n => n.stats);
+    const avgCpu = nodesWithStats.length > 0
+      ? nodesWithStats.reduce((acc, n) => acc + (n.stats?.cpu_percent || 0), 0) / nodesWithStats.length
+      : 0;
+    const avgHealth = onlineNodes.length > 0
+      ? onlineNodes.reduce((acc, n) => acc + (n.derived?.health_score || 0), 0) / onlineNodes.length
+      : 0;
+    
+    const onlinePercent = allNodes.length > 0 ? (onlineNodes.length / allNodes.length) * 100 : 0;
+    const networkScore = Math.round((onlinePercent * 0.5) + (avgHealth * 0.5));
+
+    // Build context payload
+    const contextPayload = `
+CURRENT NETWORK DATA (Real-time):
+
+SUMMARY:
+- Total Nodes: ${allNodes.length}
+- Online Nodes: ${onlineNodes.length} (${onlinePercent.toFixed(1)}%)
+- Offline Nodes: ${offlineNodes.length}
+- Network Score: ${networkScore}/100
+- Average Health Score: ${avgHealth.toFixed(0)}/100
+- Average CPU Usage: ${avgCpu.toFixed(1)}%
+
+GEOGRAPHIC DISTRIBUTION (${Object.keys(countryCounts).length} countries):
+${sortedCountries.slice(0, 15).map(([country, count]) => `- ${country}: ${count} nodes`).join('\n')}
+${sortedCountries.length > 15 ? `... and ${sortedCountries.length - 15} more countries` : ''}
+
+HEALTH DISTRIBUTION (Online nodes only):
+- Excellent (80-100): ${healthDist.excellent} nodes
+- Good (60-79): ${healthDist.good} nodes
+- Fair (40-59): ${healthDist.fair} nodes
+- Poor (0-39): ${healthDist.poor} nodes
+
+VERSION DISTRIBUTION:
+${Object.entries(versionCounts).sort(([, a], [, b]) => b - a).slice(0, 5).map(([v, c]) => `- ${v}: ${c} nodes`).join('\n')}
+
+USER QUESTION: ${question}
+
+Provide a helpful, concise answer based on the data above.`;
+
+    // Call AI
+    const completion = await openai.chat.completions.create({
+      model: AI_MODEL,
+      messages: [
+        { role: "system", content: QUERY_SYSTEM_PROMPT },
+        { role: "user", content: contextPayload },
+      ],
+      temperature: 0.3,
+      max_tokens: 300,
+    });
+
+    const answer = completion.choices[0]?.message?.content?.trim() || "Unable to generate a response.";
+    
+    console.log(`✅ AI Query answered`);
+    return c.json({
+      question,
+      answer,
+      data_snapshot: {
+        total_nodes: allNodes.length,
+        online_nodes: onlineNodes.length,
+        network_score: networkScore,
+        countries_count: Object.keys(countryCounts).length,
+      },
+      generated_at: new Date().toISOString(),
+    });
+
+  } catch (err: any) {
+    console.error("❌ AI Query Error:", err?.message || err);
+    return c.json({ 
+      answer: "Sorry, I couldn't process your question. Please try again.", 
+      error: err?.message 
+    }, 500);
   }
 });
 
