@@ -2,44 +2,29 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
-    const bootstrapUrl = process.env.BOOTSTRAP_NODE_URL || 'http://173.212.207.32:6000/rpc';
+    // TODO: This should connect to a database that stores node information
+    // For now, returning mock data based on the original implementation structure
     
-    console.log('Fetching pnodes from:', bootstrapUrl);
-    
-    // Fetch from bootstrap node
-    const response = await fetch(`${bootstrapUrl}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        jsonrpc: '2.0',
-        id: 1,
-        method: 'pnodes',
-        params: []
-      })
-    });
+    const mockNodes = Array.from({ length: 25 }, (_, i) => ({
+      id: `pnode-${i + 1}`,
+      address: `192.168.${Math.floor(i / 255)}.${(i % 255) + 1}:9001`,
+      ip: `192.168.${Math.floor(i / 255)}.${(i % 255) + 1}`,
+      version: '1.18.26',
+      cpuPercent: Math.random() * 100,
+      ramUsedBytes: Math.floor(Math.random() * 8000000000),
+      ramTotalBytes: 16000000000,
+      diskUsedBytes: Math.floor(Math.random() * 500000000000),
+      diskTotalBytes: 1000000000000,
+      lastSeenTimestamp: Math.floor(Date.now() / 1000) - Math.floor(Math.random() * 600),
+      online: Math.random() > 0.1,
+    }));
 
-    console.log('Pnodes response status:', response.status);
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Bootstrap error response:', errorText);
-      return NextResponse.json({ 
-        error: 'Bootstrap node returned error', 
-        status: response.status,
-        details: errorText 
-      }, { status: 500 });
-    }
-
-    const data = await response.json();
-    console.log('Pnodes data received, count:', data.result?.length || 0);
-    
-    return NextResponse.json(data.result || []);
+    return NextResponse.json(mockNodes);
   } catch (error: any) {
     console.error('Pnodes fetch error:', error);
     return NextResponse.json({ 
       error: 'Failed to fetch pnodes',
-      message: error.message,
-      stack: error.stack 
+      message: error.message
     }, { status: 500 });
   }
 }
