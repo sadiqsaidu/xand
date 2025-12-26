@@ -1,36 +1,63 @@
-import axios from "axios";
 import { NetworkStats, PNodesResponse, AIQueryResponse, AISearchResponse, BriefingResult, Node } from "./types";
 
-const API_BASE = "http://localhost:3000";
+// Use Next.js API routes (all requests go to /api/*)
+const API_BASE = "/api";
 
 export async function fetchStats(): Promise<NetworkStats> {
-  const response = await axios.get<NetworkStats>(`${API_BASE}/stats`);
-  return response.data;
+  const response = await fetch(`${API_BASE}/stats`, { cache: 'no-store' });
+  if (!response.ok) throw new Error('Failed to fetch stats');
+  return response.json();
 }
 
 export async function fetchNodes(): Promise<PNodesResponse> {
-  const response = await axios.get<PNodesResponse>(`${API_BASE}/pnodes`);
-  return response.data;
+  const response = await fetch(`${API_BASE}/pnodes`, { cache: 'no-store' });
+  if (!response.ok) throw new Error('Failed to fetch nodes');
+  const data = await response.json();
+  return { pnodes: data };
 }
 
 export async function fetchNodeDetails(ip: string): Promise<{ node: Node; fetched_at: string }> {
-  const response = await axios.get(`${API_BASE}/pnodes/${ip}`);
-  return response.data;
+  const response = await fetch(`${API_BASE}/pnodes`, { cache: 'no-store' });
+  if (!response.ok) throw new Error('Failed to fetch nodes');
+  const nodes = await response.json();
+  const node = nodes.find((n: any) => n.ip === ip);
+  return { node, fetched_at: new Date().toISOString() };
 }
 
 export async function askAI(question: string): Promise<AIQueryResponse> {
-  const response = await axios.post<AIQueryResponse>(`${API_BASE}/ai/query`, { question });
-  return response.data;
+  const response = await fetch(`${API_BASE}/ai/ask`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ question }),
+    cache: 'no-store'
+  });
+  if (!response.ok) throw new Error('Failed to ask AI');
+  return response.json();
 }
 
 export async function searchAI(query: string): Promise<AISearchResponse> {
-  const response = await axios.post<AISearchResponse>(`${API_BASE}/ai/search`, { query });
-  return response.data;
+  const response = await fetch(`${API_BASE}/ai/ask`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ question: query }),
+    cache: 'no-store'
+  });
+  if (!response.ok) throw new Error('Failed to search');
+  return response.json();
 }
 
 export async function fetchBriefing(): Promise<BriefingResult> {
-  const response = await axios.get<BriefingResult>(`${API_BASE}/ai/briefing`);
-  return response.data;
+  // For now, return a default since we don't have this endpoint yet
+  return {
+    briefing: "Network briefing coming soon",
+    generated_at: new Date().toISOString(),
+    network_snapshot: {
+      total_nodes: 0,
+      online_nodes: 0,
+      network_score: 0,
+      countries_count: 0
+    }
+  };
 }
 
 export async function diagnoseNode(ip: string): Promise<{
@@ -48,6 +75,18 @@ export async function diagnoseNode(ip: string): Promise<{
   network_averages: Record<string, unknown>;
   generated_at: string;
 }> {
-  const response = await axios.post(`${API_BASE}/ai/diagnose`, { ip });
-  return response.data;
+  const response = await fetch(`${API_BASE}/ai/diagnose`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ip }),
+    cache: 'no-store'
+  });
+  if (!response.ok) throw new Error('Failed to diagnose node');
+  const data = await response.json();
+  return {
+    ...data,
+    node_data: {},
+    network_averages: {},
+    generated_at: new Date().toISOString()
+  };
 }
