@@ -4,6 +4,8 @@ export async function GET() {
   try {
     const bootstrapUrl = process.env.BOOTSTRAP_NODE_URL || 'http://173.212.207.32:6000/rpc';
     
+    console.log('Fetching from bootstrap node:', bootstrapUrl);
+    
     // Fetch from bootstrap node
     const response = await fetch(`${bootstrapUrl}`, {
       method: 'POST',
@@ -16,12 +18,29 @@ export async function GET() {
       })
     });
 
+    console.log('Bootstrap response status:', response.status);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Bootstrap error response:', errorText);
+      return NextResponse.json({ 
+        error: 'Bootstrap node returned error', 
+        status: response.status,
+        details: errorText 
+      }, { status: 500 });
+    }
+
     const data = await response.json();
+    console.log('Bootstrap data received:', data);
     
-    return NextResponse.json(data.result || {});
-  } catch (error) {
+    return NextResponse.json(data.result || data);
+  } catch (error: any) {
     console.error('Stats fetch error:', error);
-    return NextResponse.json({ error: 'Failed to fetch stats' }, { status: 500 });
+    return NextResponse.json({ 
+      error: 'Failed to fetch stats', 
+      message: error.message,
+      stack: error.stack 
+    }, { status: 500 });
   }
 }
 
