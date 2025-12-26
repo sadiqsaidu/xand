@@ -1,19 +1,11 @@
 {
-  "name": "xand",
+  "name": "xandeum-explorer",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Xandeum Network Explorer",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "devDependencies": {
-    "@types/node": "^25.0.3",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
+    "dev": "tsx watch src/server.ts",
+    "start": "tsx src/server.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.7",
@@ -22,5 +14,10 @@
     "hono": "^4.11.1",
     "openai": "^6.15.0",
     "zod": "^4.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.9.3"
   }
 }

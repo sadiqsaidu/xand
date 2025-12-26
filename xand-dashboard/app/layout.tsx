@@ -1,21 +1,16 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
-import Sidebar from "./components/Sidebar";
+import Navbar from "./components/Navbar";
 
-const geistSans = Geist({
+const inter = Inter({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
-  title: "Xandeum Network Explorer",
-  description: "Real-time monitoring dashboard for the Xandeum decentralized storage network",
+  title: "Xandeum Explorer",
+  description: "Explore the Xandeum decentralized storage network",
 };
 
 export default function RootLayout({
@@ -25,11 +20,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50`}
-      >
-        <Sidebar />
-        <main className="ml-64 min-h-screen">
+      <body className={`${inter.variable} antialiased bg-white min-h-screen`}>
+        <Navbar />
+        <main className="pt-16">
           {children}
         </main>
       </body>

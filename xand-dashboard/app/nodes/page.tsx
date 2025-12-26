@@ -1,14 +1,16 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import { 
   Search, Filter, X, ChevronLeft, ChevronRight,
   Server, Globe2, Cpu, Clock, ArrowUpDown, Eye,
-  Stethoscope, Copy, Check, RefreshCw
+  Stethoscope, Copy, Check, RefreshCw, Star, ArrowLeft
 } from "lucide-react";
 import { fetchNodes, diagnoseNode } from "../lib/api";
 import { Node, PNodesResponse } from "../lib/types";
-import { StatusBadge, HealthBadge, MetricBar, LoadingSpinner } from "../components/ui";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const ITEMS_PER_PAGE = 25;
 
@@ -23,6 +25,8 @@ interface FilterState {
 }
 
 export default function NodesPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [data, setData] = useState<PNodesResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -60,6 +64,15 @@ export default function NodesPage() {
     const interval = setInterval(() => loadData(), 60000);
     return () => clearInterval(interval);
   }, []);
+
+  // Apply country filter from query param
+  useEffect(() => {
+    const countryParam = searchParams.get("country");
+    if (countryParam) {
+      setFilters(f => ({ ...f, country: countryParam }));
+      setCurrentPage(1);
+    }
+  }, [searchParams]);
 
   // Get unique countries for filter
   const countries = useMemo(() => {
@@ -185,35 +198,50 @@ export default function NodesPage() {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <LoadingSpinner size="lg" text="Loading Nodes..." />
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#e85a4f] to-[#c94a40] flex items-center justify-center animate-pulse">
+            <span className="text-white font-bold text-lg">X</span>
+          </div>
+          <p className="text-gray-500">Loading nodes...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="p-6 lg:p-8 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Network Nodes</h1>
-          <p className="text-gray-500 mt-1">
-            {filteredNodes.length} of {data?.nodes.length || 0} nodes
-          </p>
-        </div>
-        <button
-          onClick={() => loadData(true)}
-          disabled={refreshing}
-          className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition disabled:opacity-50"
+    <div className="min-h-screen bg-white">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Back Link */}
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-700 mb-6"
         >
-          <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
-          Refresh
-        </button>
-      </div>
+          <ArrowLeft className="w-4 h-4" />
+          Back to Explorer
+        </Link>
 
-      {/* Filters */}
-      <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-        <div className="flex flex-wrap gap-4">
+        {/* Header */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">All Nodes</h1>
+            <p className="text-gray-500 mt-1">
+              {filteredNodes.length} of {data?.nodes.length || 0} nodes
+            </p>
+          </div>
+          <button
+            onClick={() => loadData(true)}
+            disabled={refreshing}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition disabled:opacity-50"
+          >
+            <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
+            Refresh
+          </button>
+        </div>
+
+        {/* Filters */}
+        <div className="bg-white border border-gray-200 rounded-xl p-4 mb-6">
+          <div className="flex flex-wrap gap-4">
           {/* Search */}
           <div className="flex-1 min-w-[250px]">
             <div className="relative">
@@ -226,7 +254,7 @@ export default function NodesPage() {
                   setFilters(f => ({ ...f, search: e.target.value }));
                   setCurrentPage(1);
                 }}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e85a4f]/20 focus:border-[#e85a4f]"
               />
             </div>
           </div>
@@ -238,7 +266,7 @@ export default function NodesPage() {
               setFilters(f => ({ ...f, status: e.target.value }));
               setCurrentPage(1);
             }}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e85a4f]/20 focus:border-[#e85a4f]"
           >
             <option value="all">All Status</option>
             <option value="Online">Online</option>
@@ -253,7 +281,7 @@ export default function NodesPage() {
               setFilters(f => ({ ...f, country: e.target.value }));
               setCurrentPage(1);
             }}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e85a4f]/20 focus:border-[#e85a4f]"
           >
             <option value="all">All Countries</option>
             {countries.map(c => (
@@ -268,7 +296,7 @@ export default function NodesPage() {
               setFilters(f => ({ ...f, healthMin: Number(e.target.value) }));
               setCurrentPage(1);
             }}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e85a4f]/20 focus:border-[#e85a4f]"
           >
             <option value={0}>All Health</option>
             <option value={80}>Excellent (80+)</option>
@@ -280,20 +308,20 @@ export default function NodesPage() {
           {(filters.search || filters.status !== "all" || filters.country !== "all" || filters.healthMin > 0) && (
             <button
               onClick={clearFilters}
-              className="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition"
+              className="flex items-center gap-2 px-4 py-2 text-[#e85a4f] hover:bg-[#e85a4f]/10 rounded-lg transition"
             >
               <X className="w-4 h-4" />
               Clear
             </button>
           )}
+          </div>
         </div>
-      </div>
 
       {/* Nodes Table */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-gray-50 border-b border-gray-100">
               <tr>
                 <th 
                   className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
@@ -401,14 +429,36 @@ export default function NodesPage() {
                   </td>
                   <td className="px-4 py-3 w-32">
                     {node.stats ? (
-                      <MetricBar value={node.stats.cpu_percent || 0} label="" showValue />
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                          <div 
+                            className={`h-full rounded-full ${
+                              (node.stats.cpu_percent || 0) > 80 ? 'bg-red-500' :
+                              (node.stats.cpu_percent || 0) > 60 ? 'bg-yellow-500' : 'bg-green-500'
+                            }`}
+                            style={{ width: `${Math.min(node.stats.cpu_percent || 0, 100)}%` }}
+                          />
+                        </div>
+                        <span className="text-xs text-gray-500 w-10">{typeof node.stats?.cpu_percent === "number" ? node.stats.cpu_percent.toFixed(0) : "0"}%</span>
+                      </div>
                     ) : (
                       <span className="text-gray-400 text-sm">N/A</span>
                     )}
                   </td>
                   <td className="px-4 py-3 w-32">
                     {node.derived ? (
-                      <MetricBar value={node.derived.ram_usage_percent} label="" showValue />
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                          <div 
+                            className={`h-full rounded-full ${
+                              node.derived.ram_usage_percent > 80 ? 'bg-red-500' :
+                              node.derived.ram_usage_percent > 60 ? 'bg-yellow-500' : 'bg-blue-500'
+                            }`}
+                            style={{ width: `${Math.min(node.derived.ram_usage_percent, 100)}%` }}
+                          />
+                        </div>
+                        <span className="text-xs text-gray-500 w-10">{typeof node.derived?.ram_usage_percent === "number" ? node.derived.ram_usage_percent.toFixed(0) : "0"}%</span>
+                      </div>
                     ) : (
                       <span className="text-gray-400 text-sm">N/A</span>
                     )}
@@ -419,23 +469,38 @@ export default function NodesPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <HealthBadge score={node.derived?.health_score || 0} />
+                    <span className={`font-semibold text-sm ${
+                      (node.derived?.health_score || 0) >= 80 ? 'text-green-600' :
+                      (node.derived?.health_score || 0) >= 60 ? 'text-yellow-600' :
+                      (node.derived?.health_score || 0) >= 40 ? 'text-orange-600' : 'text-red-600'
+                    }`}>
+                      {node.derived?.health_score || 0}/100
+                    </span>
                   </td>
                   <td className="px-4 py-3">
-                    <StatusBadge status={node.status} />
+                    <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium ${
+                      node.status === 'Online' ? 'bg-green-100 text-green-700' :
+                      node.status === 'Offline' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-600'
+                    }`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${
+                        node.status === 'Online' ? 'bg-green-500' :
+                        node.status === 'Offline' ? 'bg-red-500' : 'bg-gray-400'
+                      }`} />
+                      {node.status}
+                    </span>
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1">
-                      <button
-                        onClick={() => setSelectedNode(node)}
-                        className="p-2 hover:bg-blue-50 text-blue-600 rounded-lg transition"
+                      <Link
+                        href={`/node/${encodeURIComponent(node.ip)}`}
+                        className="p-2 hover:bg-[#e85a4f]/10 text-[#e85a4f] rounded-lg transition"
                         title="View Details"
                       >
                         <Eye className="w-4 h-4" />
-                      </button>
+                      </Link>
                       <button
                         onClick={() => handleDiagnose(node)}
-                        className="p-2 hover:bg-teal-50 text-teal-600 rounded-lg transition"
+                        className="p-2 hover:bg-[#e85a4f]/10 text-gray-500 hover:text-[#e85a4f] rounded-lg transition"
                         title="AI Diagnose"
                       >
                         <Stethoscope className="w-4 h-4" />
@@ -479,207 +544,8 @@ export default function NodesPage() {
         )}
       </div>
 
-      {/* Node Details Modal */}
-      {selectedNode && !diagnosisResult && (
-        <NodeDetailsModal 
-          node={selectedNode} 
-          onClose={() => setSelectedNode(null)}
-          onDiagnose={() => handleDiagnose(selectedNode)}
-          diagnosing={diagnosing}
-        />
-      )}
-
-      {/* Diagnosis Modal */}
-      {selectedNode && diagnosisResult && (
-        <DiagnosisModal
-          node={selectedNode}
-          result={diagnosisResult}
-          onClose={() => {
-            setSelectedNode(null);
-            setDiagnosisResult(null);
-          }}
-        />
-      )}
+      {/* Node Details Modal - Now using /node/[ip] page instead */}
     </div>
-  );
-}
-
-// Node Details Modal Component
-function NodeDetailsModal({ 
-  node, 
-  onClose, 
-  onDiagnose,
-  diagnosing 
-}: { 
-  node: Node; 
-  onClose: () => void;
-  onDiagnose: () => void;
-  diagnosing: boolean;
-}) {
-  return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6">
-          <div className="flex items-start justify-between">
-            <div>
-              <h2 className="text-2xl font-bold">Node Details</h2>
-              <p className="text-blue-100 mt-1 font-mono">{node.address}</p>
-            </div>
-            <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-lg transition">
-              <X className="w-6 h-6" />
-            </button>
-          </div>
-          <div className="flex gap-3 mt-4">
-            <StatusBadge status={node.status} />
-            {node.derived && <HealthBadge score={node.derived.health_score} size="md" />}
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-[calc(90vh-180px)] space-y-6">
-          {/* Identity */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-xs text-gray-500 uppercase font-semibold mb-1">Location</p>
-              <p className="text-lg font-semibold text-gray-900">
-                {node.geo?.country || "Unknown"}
-              </p>
-              <p className="text-sm text-gray-600">{node.geo?.city || "Unknown City"}</p>
-            </div>
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-xs text-gray-500 uppercase font-semibold mb-1">Version</p>
-              <p className="text-lg font-semibold text-gray-900">{node.version || "Unknown"}</p>
-              <p className="text-sm text-gray-600">Uptime: {node.derived?.uptime_human || "N/A"}</p>
-            </div>
-          </div>
-
-          {/* Public Key */}
-          {node.pubkey && (
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-xs text-gray-500 uppercase font-semibold mb-1">Public Key</p>
-              <p className="text-sm font-mono text-gray-900 break-all">{node.pubkey}</p>
-            </div>
-          )}
-
-          {/* Hardware Metrics */}
-          {node.stats && (
-            <div className="bg-gray-50 p-4 rounded-lg space-y-4">
-              <h4 className="font-semibold text-gray-900 flex items-center gap-2">
-                <Cpu className="w-4 h-4 text-purple-500" />
-                Hardware Metrics
-              </h4>
-              <div className="grid grid-cols-2 gap-4">
-                <MetricBar value={node.stats.cpu_percent || 0} label="CPU Usage" />
-                <MetricBar value={node.derived?.ram_usage_percent || 0} label="RAM Usage" />
-              </div>
-              <div className="grid grid-cols-2 gap-4 pt-2 border-t border-gray-200">
-                <div>
-                  <p className="text-xs text-gray-500">Packets Sent</p>
-                  <p className="font-semibold">{(node.stats.packets_sent || 0).toLocaleString()}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500">Packets Received</p>
-                  <p className="font-semibold">{(node.stats.packets_received || 0).toLocaleString()}</p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* AI Diagnose Button */}
-          <button
-            onClick={onDiagnose}
-            disabled={diagnosing}
-            className="w-full py-3 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg font-medium hover:from-teal-700 hover:to-cyan-700 transition flex items-center justify-center gap-2 disabled:opacity-50"
-          >
-            {diagnosing ? (
-              <>
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                Analyzing...
-              </>
-            ) : (
-              <>
-                <Stethoscope className="w-5 h-5" />
-                Run AI Diagnosis
-              </>
-            )}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Diagnosis Result Modal
-function DiagnosisModal({ 
-  node, 
-  result, 
-  onClose 
-}: { 
-  node: Node; 
-  result: any; 
-  onClose: () => void;
-}) {
-  const statusColors = {
-    Healthy: "border-green-500 bg-green-50 text-green-700",
-    Warning: "border-yellow-500 bg-yellow-50 text-yellow-700",
-    Critical: "border-red-500 bg-red-50 text-red-700",
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-teal-600 to-cyan-600 text-white p-6">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-3">
-              <Stethoscope className="w-8 h-8" />
-              <div>
-                <h2 className="text-2xl font-bold">AI Diagnosis</h2>
-                <p className="text-teal-100 mt-1 font-mono">{node.ip}</p>
-              </div>
-            </div>
-            <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-lg transition">
-              <X className="w-6 h-6" />
-            </button>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)] space-y-6">
-          {/* Status */}
-          <div className={`border-l-4 rounded-xl p-4 ${statusColors[result.diagnosis.status as keyof typeof statusColors]}`}>
-            <p className="font-bold text-lg">{result.diagnosis.status}</p>
-            <p className="mt-1">{result.diagnosis.summary}</p>
-          </div>
-
-          {/* Metrics Comparison */}
-          <div className="bg-gray-50 rounded-xl p-4">
-            <h4 className="font-semibold text-gray-900 mb-4">Metrics vs Network Average</h4>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="bg-white p-3 rounded-lg border">
-                <p className="text-xs text-gray-500 mb-1">CPU Usage</p>
-                <p className="text-xl font-bold">{result.diagnosis.metrics_comparison.cpu.node.toFixed(1)}%</p>
-                <p className="text-xs text-gray-400">avg: {result.diagnosis.metrics_comparison.cpu.network_avg.toFixed(1)}%</p>
-              </div>
-              <div className="bg-white p-3 rounded-lg border">
-                <p className="text-xs text-gray-500 mb-1">RAM Usage</p>
-                <p className="text-xl font-bold">{result.diagnosis.metrics_comparison.ram.node.toFixed(1)}%</p>
-                <p className="text-xs text-gray-400">avg: {result.diagnosis.metrics_comparison.ram.network_avg.toFixed(1)}%</p>
-              </div>
-              <div className="bg-white p-3 rounded-lg border">
-                <p className="text-xs text-gray-500 mb-1">Uptime</p>
-                <p className="text-xl font-bold">{result.diagnosis.metrics_comparison.uptime.node}</p>
-                <p className="text-xs text-gray-400">avg: {result.diagnosis.metrics_comparison.uptime.network_avg}</p>
-              </div>
-            </div>
-          </div>
-
-          <p className="text-xs text-gray-400 text-center">
-            Generated at {new Date(result.generated_at).toLocaleString()}
-          </p>
-        </div>
-      </div>
     </div>
   );
 }

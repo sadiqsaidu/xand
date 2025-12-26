@@ -15,7 +15,6 @@ const navItems = [
   { href: "/", label: "Overview", icon: LayoutDashboard },
   { href: "/nodes", label: "Nodes", icon: Server },
   { href: "/map", label: "World Map", icon: Globe2 },
-  { href: "/ai", label: "AI Assistant", icon: MessageSquare },
 ];
 
 export default function Sidebar() {
