@@ -89,14 +89,14 @@ export async function searchAI(query: string): Promise<AISearchResponse> {
 export async function fetchBriefing(): Promise<BriefingResult> {
   // For now, return a default since we don't have this endpoint yet
   return {
-    briefing: "Network briefing coming soon",
+    headline: "Network briefing coming soon",
+    bullets: [
+      "Real-time monitoring active",
+      "AI analysis in development",
+      "Check back soon for daily briefings"
+    ],
     generated_at: new Date().toISOString(),
-    network_snapshot: {
-      total_nodes: 0,
-      online_nodes: 0,
-      network_score: 0,
-      countries_count: 0
-    }
+    cached: false
   };
 }
 
