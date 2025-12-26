@@ -11,6 +11,74 @@ import { useRouter } from "next/navigation";
 import { fetchNodes, askAI } from "../lib/api";
 import { Node } from "../lib/types";
 
+const getFlagEmoji = (countryName: string) => {
+  const countryCodeMap: { [key: string]: string } = {
+    'United States': '🇺🇸',
+    'Germany': '🇩🇪',
+    'Finland': '🇫🇮',
+    'Singapore': '🇸🇬',
+    'United Kingdom': '🇬🇧',
+    'Japan': '🇯🇵',
+    'Netherlands': '🇳🇱',
+    'Canada': '🇨🇦',
+    'France': '🇫🇷',
+    'Australia': '🇦🇺',
+    'Ireland': '🇮🇪',
+    'Poland': '🇵🇱',
+    'Sweden': '🇸🇪',
+    'South Korea': '🇰🇷',
+    'Brazil': '🇧🇷',
+    'India': '🇮🇳',
+    'China': '🇨🇳',
+    'Russia': '🇷🇺',
+    'Ukraine': '🇺🇦',
+    'Italy': '🇮🇹',
+    'Spain': '🇪🇸',
+    'Switzerland': '🇨🇭',
+    'Norway': '🇳🇴',
+    'Denmark': '🇩🇰',
+    'Belgium': '🇧🇪',
+    'Austria': '🇦🇹',
+    'Portugal': '🇵🇹',
+    'Greece': '🇬🇷',
+    'Turkey': '🇹🇷',
+    'Israel': '🇮🇱',
+    'South Africa': '🇿🇦',
+    'New Zealand': '🇳🇿',
+    'Mexico': '🇲🇽',
+    'Argentina': '🇦🇷',
+    'Chile': '🇨🇱',
+    'Colombia': '🇨🇴',
+    'Peru': '🇵🇪',
+    'Venezuela': '🇻🇪',
+    'Egypt': '🇪🇬',
+    'Nigeria': '🇳🇬',
+    'Kenya': '🇰🇪',
+    'Morocco': '🇲🇦',
+    'Tunisia': '🇹🇳',
+    'Saudi Arabia': '🇸🇦',
+    'UAE': '🇦🇪',
+    'Qatar': '🇶🇦',
+    'Kuwait': '🇰🇼',
+    'Bahrain': '🇧🇭',
+    'Oman': '🇴🇲',
+    'Jordan': '🇯🇴',
+    'Lebanon': '🇱🇧',
+    'Iraq': '🇮🇶',
+    'Iran': '🇮🇷',
+    'Pakistan': '🇵🇰',
+    'Bangladesh': '🇧🇩',
+    'Vietnam': '🇻🇳',
+    'Thailand': '🇹🇭',
+    'Indonesia': '🇮🇩',
+    'Malaysia': '🇲🇾',
+    'Philippines': '🇵🇭',
+    'Taiwan': '🇹🇼',
+    'Hong Kong': '🇭🇰',
+  };
+  return countryCodeMap[countryName] || '🏳️';
+};
+
 const ITEMS_PER_PAGE = 20;
 
 function SearchContent() {
@@ -109,24 +177,24 @@ function SearchContent() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="flex items-center justify-center min-h-[60vh] bg-background">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#e85a4f] to-[#c94a40] flex items-center justify-center animate-pulse">
-            <span className="text-white font-bold text-lg">X</span>
+          <div className="w-10 h-10 bg-orb-teal flex items-center justify-center animate-pulse">
+            <span className="text-white font-mono font-bold text-lg">X</span>
           </div>
-          <p className="text-gray-500">Searching...</p>
+          <p className="text-gray-400 font-mono text-sm">Searching...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background text-foreground">
       <div className="max-w-5xl mx-auto px-4 py-8">
         {/* Back Link */}
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-700 mb-6"
+          className="inline-flex items-center gap-2 text-gray-400 hover:text-orb-teal mb-6 font-mono text-sm transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Explorer
@@ -134,7 +202,7 @@ function SearchContent() {
 
         {/* Search Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Search Results</h1>
+          <h1 className="text-3xl font-mono font-bold text-foreground mb-4">Search Results</h1>
           
           {/* Search Form */}
           <form onSubmit={handleSearch} className="flex gap-3">
@@ -145,12 +213,12 @@ function SearchContent() {
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="Search by IP, pubkey, country, or city..."
-                className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e85a4f]/20 focus:border-[#e85a4f]"
+                className="w-full pl-12 pr-4 py-3 bg-background border border-card-border rounded-lg text-foreground font-mono text-sm focus:outline-none focus:ring-1 focus:ring-orb-teal focus:border-orb-teal placeholder-gray-500"
               />
             </div>
             <button
               type="submit"
-              className="px-6 py-3 bg-[#e85a4f] text-white font-medium rounded-lg hover:bg-[#c94a40] transition-colors"
+              className="px-6 py-3 bg-orb-teal text-white font-mono font-medium rounded-lg hover:bg-orb-teal/90 transition-colors"
             >
               Search
             </button>
@@ -159,14 +227,14 @@ function SearchContent() {
 
         {/* AI Summary */}
         {(aiLoading || aiAnswer) && (
-          <div className="mb-6 rounded-xl border border-gray-200 bg-white p-4">
+          <div className="mb-6 rounded-xl border border-card-border bg-card-bg p-4">
             {aiLoading ? (
-              <p className="text-gray-500 text-sm">Analyzing network data...</p>
+              <p className="text-gray-400 text-sm font-mono">Analyzing network data...</p>
             ) : (
-              <p className="text-gray-800 whitespace-pre-wrap">{aiAnswer}</p>
+              <p className="text-gray-300 whitespace-pre-wrap font-mono text-sm">{aiAnswer}</p>
             )}
             {aiSnapshot && (
-              <div className="mt-3 text-xs text-gray-500 flex gap-3 flex-wrap">
+              <div className="mt-3 text-xs text-gray-500 font-mono flex gap-3 flex-wrap">
                 <span>Total: {aiSnapshot.total_nodes}</span>
                 <span>Online: {aiSnapshot.online_nodes}</span>
                 <span>Countries: {aiSnapshot.countries_count}</span>
@@ -180,8 +248,8 @@ function SearchContent() {
 
         {/* Filters */}
         <div className="flex items-center justify-between mb-6">
-          <p className="text-gray-500">
-            Found <span className="font-semibold text-gray-900">{filteredNodes.length}</span> results
+          <p className="text-gray-400 font-mono text-sm">
+            Found <span className="font-semibold text-foreground">{filteredNodes.length}</span> results
             {query && <span> for "{query}"</span>}
           </p>
           
@@ -193,7 +261,7 @@ function SearchContent() {
                 setStatusFilter(e.target.value);
                 setCurrentPage(1);
               }}
-              className="px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#e85a4f]/20"
+              className="px-3 py-2 bg-card-bg border border-card-border rounded-lg text-sm text-foreground font-mono focus:outline-none focus:ring-1 focus:ring-orb-teal focus:border-orb-teal"
             >
               <option value="all">All Status</option>
               <option value="Online">Online</option>
@@ -205,41 +273,43 @@ function SearchContent() {
         {/* Results */}
         {filteredNodes.length > 0 ? (
           <>
-            <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+            <div className="bg-card-bg border border-card-border rounded-xl overflow-hidden">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-gray-100 bg-gray-50">
-                    <th className="text-left px-6 py-3 text-sm font-medium text-gray-500">Node</th>
-                    <th className="text-right px-6 py-3 text-sm font-medium text-gray-500">Health</th>
-                    <th className="text-right px-6 py-3 text-sm font-medium text-gray-500">Status</th>
-                    <th className="text-right px-6 py-3 text-sm font-medium text-gray-500">Uptime</th>
-                    <th className="text-right px-6 py-3 text-sm font-medium text-gray-500"></th>
+                  <tr className="border-b border-card-border bg-navy-900/50">
+                    <th className="text-left px-6 py-3 text-xs font-mono text-gray-400 uppercase tracking-wider">Node</th>
+                    <th className="text-right px-6 py-3 text-xs font-mono text-gray-400 uppercase tracking-wider">Health</th>
+                    <th className="text-right px-6 py-3 text-xs font-mono text-gray-400 uppercase tracking-wider">Status</th>
+                    <th className="text-right px-6 py-3 text-xs font-mono text-gray-400 uppercase tracking-wider">Uptime</th>
+                    <th className="text-right px-6 py-3 text-xs font-mono text-gray-400 uppercase tracking-wider"></th>
                   </tr>
                 </thead>
                 <tbody>
                   {paginatedNodes.map((node, index) => (
                     <tr 
                       key={node.ip}
-                      className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors cursor-pointer"
+                      className="border-b border-card-border hover:bg-card-border/10 transition-colors cursor-pointer"
                       onClick={() => router.push(`/node/${encodeURIComponent(node.ip)}`)}
                     >
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <button 
-                            className="text-gray-300 hover:text-[#e85a4f] transition-colors"
+                            className="text-gray-600 hover:text-orb-orange transition-colors"
                             onClick={(e) => e.stopPropagation()}
                           >
                             <Star className="w-4 h-4" />
                           </button>
                           <div>
                             <div className="flex items-center gap-2">
-                              <span className="font-medium text-gray-900">{node.ip}</span>
+                              <span className="font-mono text-foreground">{node.ip}</span>
                               {node.geo?.country && (
-                                <span className="text-xs text-gray-400">{node.geo.country}</span>
+                                <span className="text-xs text-gray-400 flex items-center gap-1">
+                                  {getFlagEmoji(node.geo.country)} {node.geo.country}
+                                </span>
                               )}
                             </div>
                             {node.pubkey && (
-                              <span className="text-xs text-gray-400 font-mono">
+                              <span className="text-xs text-gray-500 font-mono block mt-0.5">
                                 {node.pubkey.slice(0, 8)}...{node.pubkey.slice(-4)}
                               </span>
                             )}
@@ -247,22 +317,22 @@ function SearchContent() {
                         </div>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <span className={`font-semibold ${
-                          (node.derived?.health_score || 0) >= 80 ? "text-green-600" :
-                          (node.derived?.health_score || 0) >= 60 ? "text-yellow-600" :
-                          "text-red-600"
+                        <span className={`font-mono font-medium ${
+                          (node.derived?.health_score || 0) >= 80 ? "text-orb-teal" :
+                          (node.derived?.health_score || 0) >= 60 ? "text-orb-orange" :
+                          "text-red-500"
                         }`}>
                           {node.derived?.health_score || 0}/100
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <span className={`inline-flex items-center gap-1.5 text-sm ${
-                          node.status === "Online" ? "text-green-600" :
-                          node.status === "Offline" ? "text-red-600" :
+                        <span className={`inline-flex items-center gap-1.5 text-sm font-mono ${
+                          node.status === "Online" ? "text-orb-teal" :
+                          node.status === "Offline" ? "text-red-500" :
                           "text-gray-500"
                         }`}>
-                          <span className={`w-2 h-2 rounded-full ${
-                            node.status === "Online" ? "bg-green-500" :
+                          <span className={`w-1.5 h-1.5 rounded-full ${
+                            node.status === "Online" ? "bg-orb-teal" :
                             node.status === "Offline" ? "bg-red-500" :
                             "bg-gray-400"
                           }`} />
@@ -270,7 +340,7 @@ function SearchContent() {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <span className="text-gray-600 font-medium">
+                        <span className="text-gray-400 font-mono text-sm">
                           {node.derived?.uptime_human || "N/A"}
                         </span>
                       </td>
@@ -278,7 +348,7 @@ function SearchContent() {
                         <Link
                           href={`/node/${encodeURIComponent(node.ip)}`}
                           onClick={(e) => e.stopPropagation()}
-                          className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-[#e85a4f] border border-[#e85a4f]/30 rounded-lg hover:bg-[#e85a4f]/5 transition-colors"
+                          className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-mono font-medium text-orb-teal border border-orb-teal/30 rounded hover:bg-orb-teal/10 transition-colors"
                         >
                           View
                         </Link>
@@ -295,7 +365,7 @@ function SearchContent() {
                 <button
                   onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="p-2 rounded-lg border border-card-border text-gray-400 hover:bg-card-border/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </button>
@@ -317,10 +387,10 @@ function SearchContent() {
                       <button
                         key={pageNum}
                         onClick={() => setCurrentPage(pageNum)}
-                        className={`w-10 h-10 rounded-lg font-medium transition-colors ${
+                        className={`w-10 h-10 rounded-lg font-mono font-medium transition-colors ${
                           currentPage === pageNum
-                            ? "bg-[#e85a4f] text-white"
-                            : "hover:bg-gray-100 text-gray-600"
+                            ? "bg-orb-teal text-white"
+                            : "hover:bg-card-border/30 text-gray-400"
                         }`}
                       >
                         {pageNum}
@@ -332,7 +402,7 @@ function SearchContent() {
                 <button
                   onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
-                  className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="p-2 rounded-lg border border-card-border text-gray-400 hover:bg-card-border/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <ChevronRight className="w-5 h-5" />
                 </button>
@@ -341,14 +411,14 @@ function SearchContent() {
           </>
         ) : (
           <div className="text-center py-16">
-            <Server className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">No results found</h2>
-            <p className="text-gray-500">
+            <Server className="w-16 h-16 mx-auto mb-4 text-gray-600" />
+            <h2 className="text-xl font-mono font-semibold text-foreground mb-2">No results found</h2>
+            <p className="text-gray-400 font-mono">
               No nodes match your search for "{query}"
             </p>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 mt-6 px-4 py-2 text-[#e85a4f] hover:text-[#c94a40] font-medium"
+              className="inline-flex items-center gap-2 mt-6 px-4 py-2 text-orb-teal hover:text-orb-teal/80 font-mono font-medium transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               Back to home
@@ -363,12 +433,12 @@ function SearchContent() {
 export default function SearchPage() {
   return (
     <Suspense fallback={
-      <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="flex items-center justify-center min-h-[60vh] bg-background">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#e85a4f] to-[#c94a40] flex items-center justify-center animate-pulse">
-            <span className="text-white font-bold text-lg">X</span>
+          <div className="w-10 h-10 bg-orb-teal flex items-center justify-center animate-pulse">
+            <span className="text-white font-mono font-bold text-lg">X</span>
           </div>
-          <p className="text-gray-500">Loading...</p>
+          <p className="text-gray-400 font-mono text-sm">Loading...</p>
         </div>
       </div>
     }>

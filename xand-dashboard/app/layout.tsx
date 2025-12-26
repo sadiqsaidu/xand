@@ -25,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${jetbrainsMono.variable} antialiased bg-white min-h-screen font-sans`}>
+      <body className={`${inter.variable} ${jetbrainsMono.variable} antialiased bg-background min-h-screen font-sans text-foreground`}>
         <Navbar />
         <main className="pt-16">
           {children}

@@ -690,11 +690,11 @@ app.post("/ai/query", async (c) => {
     const completion = await openai.chat.completions.create({
       model: AI_MODEL,
       messages: [
-        { role: "system", content: "You are a precise analyst. Use ONLY the provided data. Always include numeric counts when available. If the user asks about a country, use the supplied counts; never guess." },
-        { role: "user", content: `Data: ${JSON.stringify(dataSnapshot)}. Question: ${question}` }
+        { role: "system", content: "You are an expert analyst for the Xandeum pNode Network (a decentralized storage network). You have access to real-time network data. \n\nYour goal is to answer user questions accurately using ONLY the provided data snapshot. \n\nGuidelines:\n1. Be precise and concise. Avoid fluff.\n2. If the user asks about a specific country, check the 'matched_country' and 'matched_country_count' fields. If the count is null, say there are no nodes there.\n3. If the user asks 'how many nodes', use the 'total_nodes' and 'online_nodes' counts.\n4. If the user asks about network health, use the 'network_score' (0-100).\n5. If the user asks a general question about Xandeum, explain that it is a scalable storage layer for Solana, and these pNodes are the physical storage providers.\n6. Always format numbers clearly (e.g., '25 nodes' not '25').\n7. If the data doesn't support the answer, admit it honestly." },
+        { role: "user", content: `Data Snapshot: ${JSON.stringify(dataSnapshot)}. \n\nUser Question: ${question}` }
       ],
       temperature: 0.3,
-      max_tokens: 200,
+      max_tokens: 300,
     });
     
     return c.json({

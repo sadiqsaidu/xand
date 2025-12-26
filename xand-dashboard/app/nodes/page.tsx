@@ -15,6 +15,18 @@ import { useRouter } from "next/navigation";
 
 const ITEMS_PER_PAGE = 25;
 
+// Helper to get flag emoji from country name
+const getFlagEmoji = (countryName: string) => {
+  const flags: Record<string, string> = {
+    "United States": "🇺🇸", "Germany": "🇩🇪", "United Kingdom": "🇬🇧", "France": "🇫🇷",
+    "Canada": "🇨🇦", "Japan": "🇯🇵", "China": "🇨🇳", "India": "🇮🇳", "Brazil": "🇧🇷",
+    "Australia": "🇦🇺", "Russia": "🇷🇺", "South Korea": "🇰🇷", "Netherlands": "🇳🇱",
+    "Singapore": "🇸🇬", "Ireland": "🇮🇪", "Sweden": "🇸🇪", "Switzerland": "🇨🇭",
+    "Finland": "🇫🇮", "Norway": "🇳🇴", "Denmark": "🇩🇰", "Italy": "🇮🇹", "Spain": "🇪🇸"
+  };
+  return flags[countryName] || "🌍";
+};
+
 type SortField = "ip" | "country" | "health" | "cpu" | "uptime" | "status";
 type SortDirection = "asc" | "desc";
 
@@ -199,24 +211,24 @@ function NodesPageContent() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="flex items-center justify-center min-h-[60vh] bg-background">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 bg-[#e85a4f] flex items-center justify-center animate-pulse">
+          <div className="w-10 h-10 bg-orb-teal flex items-center justify-center animate-pulse">
             <span className="text-white font-mono font-bold text-lg">X</span>
           </div>
-          <p className="text-gray-500 font-mono text-sm">Loading nodes...</p>
+          <p className="text-gray-400 font-mono text-sm">Loading nodes...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background text-foreground">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Back Link */}
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-700 mb-6 font-mono text-sm"
+          className="inline-flex items-center gap-2 text-gray-400 hover:text-orb-teal mb-6 font-mono text-sm transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Explorer
@@ -225,15 +237,15 @@ function NodesPageContent() {
         {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-3xl font-mono font-bold text-gray-900">All Nodes</h1>
-            <p className="text-gray-500 mt-1 font-mono text-sm">
+            <h1 className="text-3xl font-mono font-bold text-foreground">All Nodes</h1>
+            <p className="text-gray-400 mt-1 font-mono text-sm">
               {filteredNodes.length} of {data?.nodes.length || 0} nodes
             </p>
           </div>
           <button
             onClick={() => loadData(true)}
             disabled={refreshing}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-mono font-medium text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 transition disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 text-sm font-mono font-medium text-gray-300 bg-card-bg border border-card-border hover:bg-card-border transition disabled:opacity-50"
           >
             <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
             Refresh
@@ -241,7 +253,7 @@ function NodesPageContent() {
         </div>
 
         {/* Filters */}
-        <div className="bg-white border border-gray-200 p-4 mb-6">
+        <div className="bg-card-bg border border-card-border p-4 mb-6">
           <div className="flex flex-wrap gap-4">
           {/* Search */}
           <div className="flex-1 min-w-[250px]">
@@ -255,7 +267,7 @@ function NodesPageContent() {
                   setFilters(f => ({ ...f, search: e.target.value }));
                   setCurrentPage(1);
                 }}
-                className="w-full pl-10 pr-4 py-2 font-mono text-sm border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#e85a4f] focus:border-[#e85a4f]"
+                className="w-full pl-10 pr-4 py-2 font-mono text-sm bg-background border border-card-border text-foreground focus:outline-none focus:ring-1 focus:ring-orb-teal focus:border-orb-teal placeholder-gray-500"
               />
             </div>
           </div>
@@ -267,7 +279,7 @@ function NodesPageContent() {
               setFilters(f => ({ ...f, status: e.target.value }));
               setCurrentPage(1);
             }}
-            className="px-4 py-2 font-mono text-sm border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#e85a4f] focus:border-[#e85a4f]"
+            className="px-4 py-2 font-mono text-sm bg-background border border-card-border text-foreground focus:outline-none focus:ring-1 focus:ring-orb-teal focus:border-orb-teal"
           >
             <option value="all">All Status</option>
             <option value="Online">Online</option>
@@ -282,7 +294,7 @@ function NodesPageContent() {
               setFilters(f => ({ ...f, country: e.target.value }));
               setCurrentPage(1);
             }}
-            className="px-4 py-2 font-mono text-sm border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#e85a4f] focus:border-[#e85a4f]"
+            className="px-4 py-2 font-mono text-sm bg-background border border-card-border text-foreground focus:outline-none focus:ring-1 focus:ring-orb-teal focus:border-orb-teal"
           >
             <option value="all">All Countries</option>
             {countries.map(c => (
@@ -297,7 +309,22 @@ function NodesPageContent() {
               setFilters(f => ({ ...f, healthMin: Number(e.target.value) }));
               setCurrentPage(1);
             }}
-            className="px-4 py-2 font-mono text-sm border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#e85a4f] focus:border-[#e85a4f]"
+            className="px-4 py-2 font-mono text-sm bg-background border border-card-border text-foreground focus:outline-none focus:ring-1 focus:ring-orb-teal focus:border-orb-teal"
+          >
+            <option value="all">All Countries</option>
+            {countries.map(c => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+
+          {/* Health Filter */}
+          <select
+            value={filters.healthMin}
+            onChange={(e) => {
+              setFilters(f => ({ ...f, healthMin: Number(e.target.value) }));
+              setCurrentPage(1);
+            }}
+            className="px-4 py-2 font-mono text-sm bg-background border border-card-border text-foreground focus:outline-none focus:ring-1 focus:ring-orb-teal focus:border-orb-teal"
           >
             <option value={0}>All Health</option>
             <option value={80}>Excellent (80+)</option>
@@ -309,7 +336,7 @@ function NodesPageContent() {
           {(filters.search || filters.status !== "all" || filters.country !== "all" || filters.healthMin > 0) && (
             <button
               onClick={clearFilters}
-              className="flex items-center gap-2 px-4 py-2 font-mono text-sm text-[#e85a4f] hover:bg-[#e85a4f]/10 transition"
+              className="flex items-center gap-2 px-4 py-2 font-mono text-sm text-orb-teal hover:bg-orb-teal/10 transition"
             >
               <X className="w-4 h-4" />
               Clear
@@ -319,13 +346,13 @@ function NodesPageContent() {
         </div>
 
       {/* Nodes Table */}
-      <div className="bg-white border border-gray-200 overflow-hidden">
+      <div className="bg-card-bg border border-card-border overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-100">
+            <thead className="bg-card-bg border-b border-card-border">
               <tr>
                 <th 
-                  className="px-4 py-3 text-left text-xs font-mono font-semibold text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
+                  className="px-4 py-3 text-left text-xs font-mono font-semibold text-gray-400 uppercase cursor-pointer hover:bg-card-border"
                   onClick={() => handleSort("ip")}
                 >
                   <div className="flex items-center gap-1">
@@ -333,11 +360,11 @@ function NodesPageContent() {
                     <ArrowUpDown className="w-3 h-3" />
                   </div>
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-mono font-semibold text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-mono font-semibold text-gray-400 uppercase">
                   CPU Trend
                 </th>
                 <th 
-                  className="px-4 py-3 text-left text-xs font-mono font-semibold text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
+                  className="px-4 py-3 text-left text-xs font-mono font-semibold text-gray-400 uppercase cursor-pointer hover:bg-card-border"
                   onClick={() => handleSort("country")}
                 >
                   <div className="flex items-center gap-1">
@@ -345,11 +372,11 @@ function NodesPageContent() {
                     <ArrowUpDown className="w-3 h-3" />
                   </div>
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-mono font-semibold text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-mono font-semibold text-gray-400 uppercase">
                   Version
                 </th>
                 <th 
-                  className="px-4 py-3 text-left text-xs font-mono font-semibold text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
+                  className="px-4 py-3 text-left text-xs font-mono font-semibold text-gray-400 uppercase cursor-pointer hover:bg-card-border"
                   onClick={() => handleSort("cpu")}
                 >
                   <div className="flex items-center gap-1">
@@ -357,11 +384,11 @@ function NodesPageContent() {
                     <ArrowUpDown className="w-3 h-3" />
                   </div>
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-mono font-semibold text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-mono font-semibold text-gray-400 uppercase">
                   RAM
                 </th>
                 <th 
-                  className="px-4 py-3 text-left text-xs font-mono font-semibold text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
+                  className="px-4 py-3 text-left text-xs font-mono font-semibold text-gray-400 uppercase cursor-pointer hover:bg-card-border"
                   onClick={() => handleSort("uptime")}
                 >
                   <div className="flex items-center gap-1">
@@ -370,7 +397,7 @@ function NodesPageContent() {
                   </div>
                 </th>
                 <th 
-                  className="px-4 py-3 text-left text-xs font-mono font-semibold text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
+                  className="px-4 py-3 text-left text-xs font-mono font-semibold text-gray-400 uppercase cursor-pointer hover:bg-card-border"
                   onClick={() => handleSort("health")}
                 >
                   <div className="flex items-center gap-1">
@@ -379,7 +406,7 @@ function NodesPageContent() {
                   </div>
                 </th>
                 <th 
-                  className="px-4 py-3 text-left text-xs font-mono font-semibold text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
+                  className="px-4 py-3 text-left text-xs font-mono font-semibold text-gray-400 uppercase cursor-pointer hover:bg-card-border"
                   onClick={() => handleSort("status")}
                 >
                   <div className="flex items-center gap-1">
@@ -387,14 +414,14 @@ function NodesPageContent() {
                     <ArrowUpDown className="w-3 h-3" />
                   </div>
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-mono font-semibold text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-mono font-semibold text-gray-400 uppercase">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-card-border">
               {paginatedNodes.map((node) => (
-                <tr key={node.ip} className="hover:bg-gray-50 transition">
+                <tr key={node.ip} className="hover:bg-card-border/50 transition">
                   <td className="px-4 py-3">
                     <div>
                       <div className="flex items-center gap-2">
@@ -439,74 +466,77 @@ function NodesPageContent() {
                   </td>
                   <td className="px-4 py-3">
                     <div>
-                      <span className="text-sm text-gray-900">{node.geo?.country || "Unknown"}</span>
+                      <span className="text-sm text-foreground flex items-center gap-2">
+                        <span>{getFlagEmoji(node.geo?.country || "")}</span>
+                        {node.geo?.country || "Unknown"}
+                      </span>
                       {node.geo?.city && (
-                        <p className="text-xs text-gray-400">{node.geo.city}</p>
+                        <p className="text-xs text-gray-400 ml-6">{node.geo.city}</p>
                       )}
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded-full">
+                    <span className="text-xs px-2 py-1 bg-orb-teal/10 text-orb-teal rounded-full font-mono">
                       {node.version || "Unknown"}
                     </span>
                   </td>
                   <td className="px-4 py-3 w-32">
                     {node.stats ? (
                       <div className="flex items-center gap-2">
-                        <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                        <div className="flex-1 h-2 bg-card-border rounded-full overflow-hidden">
                           <div 
                             className={`h-full rounded-full ${
                               (node.stats.cpu_percent || 0) > 80 ? 'bg-red-500' :
-                              (node.stats.cpu_percent || 0) > 60 ? 'bg-yellow-500' : 'bg-green-500'
+                              (node.stats.cpu_percent || 0) > 60 ? 'bg-orb-orange' : 'bg-orb-teal'
                             }`}
                             style={{ width: `${Math.min(node.stats.cpu_percent || 0, 100)}%` }}
                           />
                         </div>
-                        <span className="text-xs text-gray-500 w-10">{typeof node.stats?.cpu_percent === "number" ? node.stats.cpu_percent.toFixed(0) : "0"}%</span>
+                        <span className="text-xs text-gray-400 w-10 font-mono">{typeof node.stats?.cpu_percent === "number" ? node.stats.cpu_percent.toFixed(0) : "0"}%</span>
                       </div>
                     ) : (
-                      <span className="text-gray-400 text-sm">N/A</span>
+                      <span className="text-gray-400 text-sm font-mono">N/A</span>
                     )}
                   </td>
                   <td className="px-4 py-3 w-32">
                     {node.derived ? (
                       <div className="flex items-center gap-2">
-                        <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                        <div className="flex-1 h-2 bg-card-border rounded-full overflow-hidden">
                           <div 
                             className={`h-full rounded-full ${
                               node.derived.ram_usage_percent > 80 ? 'bg-red-500' :
-                              node.derived.ram_usage_percent > 60 ? 'bg-yellow-500' : 'bg-blue-500'
+                              node.derived.ram_usage_percent > 60 ? 'bg-orb-orange' : 'bg-orb-purple'
                             }`}
                             style={{ width: `${Math.min(node.derived.ram_usage_percent, 100)}%` }}
                           />
                         </div>
-                        <span className="text-xs text-gray-500 w-10">{typeof node.derived?.ram_usage_percent === "number" ? node.derived.ram_usage_percent.toFixed(0) : "0"}%</span>
+                        <span className="text-xs text-gray-400 w-10 font-mono">{typeof node.derived?.ram_usage_percent === "number" ? node.derived.ram_usage_percent.toFixed(0) : "0"}%</span>
                       </div>
                     ) : (
-                      <span className="text-gray-400 text-sm">N/A</span>
+                      <span className="text-gray-400 text-sm font-mono">N/A</span>
                     )}
                   </td>
                   <td className="px-4 py-3">
-                    <span className="text-sm text-gray-900">
+                    <span className="text-sm text-foreground font-mono">
                       {node.derived?.uptime_human || "N/A"}
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`font-semibold text-sm ${
-                      (node.derived?.health_score || 0) >= 80 ? 'text-green-600' :
-                      (node.derived?.health_score || 0) >= 60 ? 'text-yellow-600' :
-                      (node.derived?.health_score || 0) >= 40 ? 'text-orange-600' : 'text-red-600'
+                    <span className={`font-semibold text-sm font-mono ${
+                      (node.derived?.health_score || 0) >= 80 ? 'text-orb-teal' :
+                      (node.derived?.health_score || 0) >= 60 ? 'text-orb-orange' :
+                      (node.derived?.health_score || 0) >= 40 ? 'text-yellow-500' : 'text-red-500'
                     }`}>
                       {node.derived?.health_score || 0}/100
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium ${
-                      node.status === 'Online' ? 'bg-green-100 text-green-700' :
-                      node.status === 'Offline' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-600'
+                    <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium font-mono ${
+                      node.status === 'Online' ? 'bg-orb-teal/10 text-orb-teal' :
+                      node.status === 'Offline' ? 'bg-red-500/10 text-red-500' : 'bg-gray-500/10 text-gray-400'
                     }`}>
                       <span className={`w-1.5 h-1.5 rounded-full ${
-                        node.status === 'Online' ? 'bg-green-500' :
+                        node.status === 'Online' ? 'bg-orb-teal' :
                         node.status === 'Offline' ? 'bg-red-500' : 'bg-gray-400'
                       }`} />
                       {node.status}
@@ -516,14 +546,14 @@ function NodesPageContent() {
                     <div className="flex items-center gap-1">
                       <Link
                         href={`/node/${encodeURIComponent(node.ip)}`}
-                        className="p-2 hover:bg-[#e85a4f]/10 text-[#e85a4f] rounded-lg transition"
+                        className="p-2 hover:bg-orb-teal/10 text-orb-teal rounded-lg transition"
                         title="View Details"
                       >
                         <Eye className="w-4 h-4" />
                       </Link>
                       <button
                         onClick={() => handleDiagnose(node)}
-                        className="p-2 hover:bg-[#e85a4f]/10 text-gray-500 hover:text-[#e85a4f] rounded-lg transition"
+                        className="p-2 hover:bg-orb-teal/10 text-gray-400 hover:text-orb-teal rounded-lg transition"
                         title="AI Diagnose"
                       >
                         <Stethoscope className="w-4 h-4" />
@@ -538,8 +568,8 @@ function NodesPageContent() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200 bg-gray-50">
-            <p className="text-sm text-gray-600">
+          <div className="flex items-center justify-between px-4 py-3 border-t border-card-border bg-card-bg">
+            <p className="text-sm text-gray-400 font-mono">
               Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to{" "}
               {Math.min(currentPage * ITEMS_PER_PAGE, filteredNodes.length)} of{" "}
               {filteredNodes.length} nodes
@@ -548,17 +578,17 @@ function NodesPageContent() {
               <button
                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="p-2 hover:bg-gray-200 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-2 hover:bg-card-border rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed text-gray-400 hover:text-foreground"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-gray-400 font-mono">
                 Page {currentPage} of {totalPages}
               </span>
               <button
                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="p-2 hover:bg-gray-200 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-2 hover:bg-card-border rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed text-gray-400 hover:text-foreground"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>

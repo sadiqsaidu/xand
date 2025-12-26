@@ -89,12 +89,12 @@ export default function NetworkPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="flex items-center justify-center min-h-[60vh] bg-background">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#e85a4f] to-[#c94a40] flex items-center justify-center animate-pulse">
-            <span className="text-white font-bold text-lg">X</span>
+          <div className="w-10 h-10 bg-orb-teal flex items-center justify-center animate-pulse">
+            <span className="text-white font-mono font-bold text-lg">X</span>
           </div>
-          <p className="text-gray-500">Loading network statistics...</p>
+          <p className="text-gray-400 font-mono text-sm">Loading network statistics...</p>
         </div>
       </div>
     );
@@ -102,21 +102,27 @@ export default function NetworkPage() {
 
   if (!stats) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <p className="text-gray-500">Failed to load network data</p>
+      <div className="flex items-center justify-center min-h-[60vh] bg-background">
+        <p className="text-gray-400 font-mono">Failed to load network data</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background text-foreground">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
-        <div className="flex items-center justify-end mb-8">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-mono font-bold text-foreground">Network Status</h1>
+            <p className="text-gray-400 mt-1 font-mono text-sm">
+              Real-time metrics and distribution
+            </p>
+          </div>
           <button
             onClick={() => loadData(true)}
             disabled={refreshing}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 text-sm font-mono font-medium text-gray-300 bg-card-bg border border-card-border hover:bg-card-border transition disabled:opacity-50"
           >
             <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
             Refresh
@@ -126,127 +132,127 @@ export default function NetworkPage() {
         {/* Main Stats Grid - Like Orb */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {/* Network Health Score */}
-          <div className="bg-gradient-to-br from-[#e85a4f] to-[#c94a40] rounded-xl p-6 text-white">
+          <div className="bg-orb-teal rounded-xl p-6 text-white">
             <div className="flex items-center gap-2 mb-3">
               <Activity className="w-5 h-5 opacity-80" />
-              <span className="text-sm font-medium opacity-80">Network Score</span>
+              <span className="text-sm font-mono font-medium opacity-80">Network Score</span>
             </div>
-            <p className="text-4xl font-bold">{stats.network.network_score}</p>
-            <p className="text-sm opacity-70 mt-1">out of 100</p>
+            <p className="text-4xl font-mono font-bold">{stats.network.network_score}</p>
+            <p className="text-sm font-mono opacity-70 mt-1">out of 100</p>
           </div>
 
           {/* Total Nodes */}
-          <div className="bg-white border border-gray-200 rounded-xl p-6">
+          <div className="bg-card-bg border border-card-border rounded-xl p-6">
             <div className="flex items-center gap-2 mb-3">
-              <Server className="w-5 h-5 text-blue-600" />
-              <span className="text-sm font-medium text-gray-500">Total pNodes</span>
+              <Server className="w-5 h-5 text-orb-teal" />
+              <span className="text-sm font-mono font-medium text-gray-400">Total pNodes</span>
             </div>
-            <p className="text-4xl font-bold text-gray-900">{stats.network.total_nodes}</p>
-            <p className="text-sm text-green-600 mt-1">
+            <p className="text-4xl font-mono font-bold text-foreground">{stats.network.total_nodes}</p>
+            <p className="text-sm font-mono text-orb-teal mt-1">
               {stats.network.online_nodes} online ({stats.network.online_percent.toFixed(1)}%)
             </p>
           </div>
 
           {/* Countries */}
-          <div className="bg-white border border-gray-200 rounded-xl p-6">
+          <div className="bg-card-bg border border-card-border rounded-xl p-6">
             <div className="flex items-center gap-2 mb-3">
-              <Globe2 className="w-5 h-5 text-purple-600" />
-              <span className="text-sm font-medium text-gray-500">Countries</span>
+              <Globe2 className="w-5 h-5 text-orb-purple" />
+              <span className="text-sm font-mono font-medium text-gray-400">Countries</span>
             </div>
-            <p className="text-4xl font-bold text-gray-900">{stats.network.unique_countries}</p>
-            <p className="text-sm text-gray-400 mt-1">global distribution</p>
+            <p className="text-4xl font-mono font-bold text-foreground">{stats.network.unique_countries}</p>
+            <p className="text-sm font-mono text-gray-400 mt-1">global distribution</p>
           </div>
 
           {/* Avg Health */}
-          <div className="bg-white border border-gray-200 rounded-xl p-6">
+          <div className="bg-card-bg border border-card-border rounded-xl p-6">
             <div className="flex items-center gap-2 mb-3">
-              <TrendingUp className="w-5 h-5 text-green-600" />
-              <span className="text-sm font-medium text-gray-500">Avg Health</span>
+              <TrendingUp className="w-5 h-5 text-orb-teal" />
+              <span className="text-sm font-mono font-medium text-gray-400">Avg Health</span>
             </div>
-            <p className="text-4xl font-bold text-gray-900">{stats.performance.avg_health_score}</p>
-            <p className="text-sm text-gray-400 mt-1">score / 100</p>
+            <p className="text-4xl font-mono font-bold text-foreground">{stats.performance.avg_health_score}</p>
+            <p className="text-sm font-mono text-gray-400 mt-1">score / 100</p>
           </div>
         </div>
 
         {/* Resource Stats Row */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-          <div className="bg-gray-50 rounded-xl p-4">
+          <div className="bg-card-bg border border-card-border rounded-xl p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Cpu className="w-4 h-4 text-orange-500" />
-              <span className="text-xs text-gray-500 uppercase">Avg CPU</span>
+              <Cpu className="w-4 h-4 text-orb-orange" />
+              <span className="text-xs text-gray-400 uppercase font-mono">Avg CPU</span>
             </div>
-            <p className="text-xl font-bold text-gray-900">{stats.performance.avg_cpu_percent.toFixed(1)}%</p>
+            <p className="text-xl font-mono font-bold text-foreground">{stats.performance.avg_cpu_percent.toFixed(1)}%</p>
           </div>
           
-          <div className="bg-gray-50 rounded-xl p-4">
+          <div className="bg-card-bg border border-card-border rounded-xl p-4">
             <div className="flex items-center gap-2 mb-2">
-              <HardDrive className="w-4 h-4 text-blue-500" />
-              <span className="text-xs text-gray-500 uppercase">Avg RAM</span>
+              <HardDrive className="w-4 h-4 text-orb-teal" />
+              <span className="text-xs text-gray-400 uppercase font-mono">Avg RAM</span>
             </div>
-            <p className="text-xl font-bold text-gray-900">{stats.performance.avg_ram_percent.toFixed(1)}%</p>
+            <p className="text-xl font-mono font-bold text-foreground">{stats.performance.avg_ram_percent.toFixed(1)}%</p>
           </div>
           
-          <div className="bg-gray-50 rounded-xl p-4">
+          <div className="bg-card-bg border border-card-border rounded-xl p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Clock className="w-4 h-4 text-teal-500" />
-              <span className="text-xs text-gray-500 uppercase">Avg Uptime</span>
+              <Clock className="w-4 h-4 text-orb-teal" />
+              <span className="text-xs text-gray-400 uppercase font-mono">Avg Uptime</span>
             </div>
-            <p className="text-xl font-bold text-gray-900">{stats.uptime.avg_human}</p>
+            <p className="text-xl font-mono font-bold text-foreground">{stats.uptime.avg_human}</p>
           </div>
           
-          <div className="bg-gray-50 rounded-xl p-4">
+          <div className="bg-card-bg border border-card-border rounded-xl p-4">
             <div className="flex items-center gap-2 mb-2">
               <Zap className="w-4 h-4 text-yellow-500" />
-              <span className="text-xs text-gray-500 uppercase">Max Uptime</span>
+              <span className="text-xs text-gray-400 uppercase font-mono">Max Uptime</span>
             </div>
-            <p className="text-xl font-bold text-gray-900">{stats.uptime.max_human}</p>
+            <p className="text-xl font-mono font-bold text-foreground">{stats.uptime.max_human}</p>
           </div>
 
-          <div className="bg-gray-50 rounded-xl p-4">
+          <div className="bg-card-bg border border-card-border rounded-xl p-4">
             <div className="flex items-center gap-2 mb-2">
-              <ArrowUpDown className="w-4 h-4 text-indigo-500" />
-              <span className="text-xs text-gray-500 uppercase">Versions</span>
+              <ArrowUpDown className="w-4 h-4 text-orb-purple" />
+              <span className="text-xs text-gray-400 uppercase font-mono">Versions</span>
             </div>
-            <p className="text-xl font-bold text-gray-900">{stats.network.unique_versions}</p>
+            <p className="text-xl font-mono font-bold text-foreground">{stats.network.unique_versions}</p>
           </div>
         </div>
 
         {/* Storage & Network Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           {/* Storage Stats */}
-          <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
-              <Database className="w-5 h-5 text-[#e85a4f]" />
-              <h3 className="font-semibold text-gray-900">Storage</h3>
+          <div className="bg-card-bg border border-card-border rounded-xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-card-border flex items-center gap-2">
+              <Database className="w-5 h-5 text-orb-orange" />
+              <h3 className="font-mono font-semibold text-foreground">Storage</h3>
             </div>
             <div className="p-6">
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <p className="text-xs text-gray-500 uppercase mb-1">Data Stored</p>
-                  <p className="text-lg font-bold text-gray-900">{formatBytes(storageStats.totalFileSize)}</p>
+                  <p className="text-xs text-gray-400 uppercase mb-1 font-mono">Data Stored</p>
+                  <p className="text-lg font-mono font-bold text-foreground">{formatBytes(storageStats.totalFileSize)}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 uppercase mb-1">Total Pages</p>
-                  <p className="text-lg font-bold text-gray-900">{storageStats.totalPages.toLocaleString()}</p>
+                  <p className="text-xs text-gray-400 uppercase mb-1 font-mono">Total Pages</p>
+                  <p className="text-lg font-mono font-bold text-foreground">{storageStats.totalPages.toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 uppercase mb-1">Nodes Storing</p>
-                  <p className="text-lg font-bold text-gray-900">{storageStats.nodesReporting}</p>
+                  <p className="text-xs text-gray-400 uppercase mb-1 font-mono">Nodes Storing</p>
+                  <p className="text-lg font-mono font-bold text-foreground">{storageStats.nodesReporting}</p>
                 </div>
               </div>
               {meta?.ram && (
-                <div className="mt-4 pt-4 border-t border-gray-100">
+                <div className="mt-4 pt-4 border-t border-card-border">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs text-gray-500 uppercase">Network RAM Usage</span>
-                    <span className="text-sm font-semibold text-gray-900">{meta.ram.utilization_percent.toFixed(1)}%</span>
+                    <span className="text-xs text-gray-400 uppercase font-mono">Network RAM Usage</span>
+                    <span className="text-sm font-mono font-semibold text-foreground">{meta.ram.utilization_percent.toFixed(1)}%</span>
                   </div>
-                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-2 bg-card-border rounded-full overflow-hidden">
                     <div 
-                      className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all"
+                      className="h-full bg-orb-teal rounded-full transition-all"
                       style={{ width: `${Math.min(meta.ram.utilization_percent, 100)}%` }}
                     />
                   </div>
-                  <div className="flex justify-between mt-1 text-xs text-gray-400">
+                  <div className="flex justify-between mt-1 text-xs text-gray-400 font-mono">
                     <span>{meta.ram.used_human} used</span>
                     <span>{meta.ram.total_human} total</span>
                   </div>
@@ -256,30 +262,30 @@ export default function NetworkPage() {
           </div>
 
           {/* Network Traffic */}
-          <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
-              <BarChart3 className="w-5 h-5 text-[#e85a4f]" />
-              <h3 className="font-semibold text-gray-900">Network Traffic</h3>
+          <div className="bg-card-bg border border-card-border rounded-xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-card-border flex items-center gap-2">
+              <BarChart3 className="w-5 h-5 text-orb-orange" />
+              <h3 className="font-mono font-semibold text-foreground">Network Traffic</h3>
             </div>
             <div className="p-6">
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <p className="text-xs text-gray-500 uppercase mb-1">Packets Sent</p>
-                  <p className="text-lg font-bold text-gray-900">{trafficStats.totalSent.toLocaleString()}</p>
+                  <p className="text-xs text-gray-400 uppercase mb-1 font-mono">Packets Sent</p>
+                  <p className="text-lg font-mono font-bold text-foreground">{trafficStats.totalSent.toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 uppercase mb-1">Packets Received</p>
-                  <p className="text-lg font-bold text-gray-900">{trafficStats.totalReceived.toLocaleString()}</p>
+                  <p className="text-xs text-gray-400 uppercase mb-1 font-mono">Packets Received</p>
+                  <p className="text-lg font-mono font-bold text-foreground">{trafficStats.totalReceived.toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 uppercase mb-1">Active Streams</p>
-                  <p className="text-lg font-bold text-gray-900">{trafficStats.activeStreams.toLocaleString()}</p>
+                  <p className="text-xs text-gray-400 uppercase mb-1 font-mono">Active Streams</p>
+                  <p className="text-lg font-mono font-bold text-foreground">{trafficStats.activeStreams.toLocaleString()}</p>
                 </div>
               </div>
-              <div className="mt-4 pt-4 border-t border-gray-100">
+              <div className="mt-4 pt-4 border-t border-card-border">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-500 uppercase">Total Packets</span>
-                  <span className="text-lg font-bold text-[#e85a4f]">
+                  <span className="text-xs text-gray-400 uppercase font-mono">Total Packets</span>
+                  <span className="text-lg font-mono font-bold text-orb-orange">
                     {(trafficStats.totalSent + trafficStats.totalReceived).toLocaleString()}
                   </span>
                 </div>
@@ -290,48 +296,48 @@ export default function NetworkPage() {
 
         {/* Health Distribution */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-green-50 border border-green-100 rounded-xl p-4">
+          <div className="bg-orb-teal/10 border border-orb-teal/20 rounded-xl p-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-green-700">Excellent (80+)</span>
-              <span className="text-2xl font-bold text-green-700">{stats.health_distribution.Excellent || 0}</span>
+              <span className="text-sm text-orb-teal font-mono">Excellent (80+)</span>
+              <span className="text-2xl font-mono font-bold text-orb-teal">{stats.health_distribution.Excellent || 0}</span>
             </div>
-            <div className="mt-2 h-1.5 bg-green-200 rounded-full overflow-hidden">
+            <div className="mt-2 h-1.5 bg-orb-teal/20 rounded-full overflow-hidden">
               <div 
-                className="h-full bg-green-500 rounded-full"
+                className="h-full bg-orb-teal rounded-full"
                 style={{ width: `${((stats.health_distribution.Excellent || 0) / totalNodes) * 100}%` }}
               />
             </div>
           </div>
-          <div className="bg-yellow-50 border border-yellow-100 rounded-xl p-4">
+          <div className="bg-orb-orange/10 border border-orb-orange/20 rounded-xl p-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-yellow-700">Good (60-79)</span>
-              <span className="text-2xl font-bold text-yellow-700">{stats.health_distribution.Good || 0}</span>
+              <span className="text-sm text-orb-orange font-mono">Good (60-79)</span>
+              <span className="text-2xl font-mono font-bold text-orb-orange">{stats.health_distribution.Good || 0}</span>
             </div>
-            <div className="mt-2 h-1.5 bg-yellow-200 rounded-full overflow-hidden">
+            <div className="mt-2 h-1.5 bg-orb-orange/20 rounded-full overflow-hidden">
               <div 
-                className="h-full bg-yellow-500 rounded-full"
+                className="h-full bg-orb-orange rounded-full"
                 style={{ width: `${((stats.health_distribution.Good || 0) / totalNodes) * 100}%` }}
               />
             </div>
           </div>
-          <div className="bg-orange-50 border border-orange-100 rounded-xl p-4">
+          <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-orange-700">Fair (40-59)</span>
-              <span className="text-2xl font-bold text-orange-700">{stats.health_distribution.Fair || 0}</span>
+              <span className="text-sm text-yellow-500 font-mono">Fair (40-59)</span>
+              <span className="text-2xl font-mono font-bold text-yellow-500">{stats.health_distribution.Fair || 0}</span>
             </div>
-            <div className="mt-2 h-1.5 bg-orange-200 rounded-full overflow-hidden">
+            <div className="mt-2 h-1.5 bg-yellow-500/20 rounded-full overflow-hidden">
               <div 
-                className="h-full bg-orange-500 rounded-full"
+                className="h-full bg-yellow-500 rounded-full"
                 style={{ width: `${((stats.health_distribution.Fair || 0) / totalNodes) * 100}%` }}
               />
             </div>
           </div>
-          <div className="bg-red-50 border border-red-100 rounded-xl p-4">
+          <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-red-700">Poor (0-39)</span>
-              <span className="text-2xl font-bold text-red-700">{stats.health_distribution.Poor || 0}</span>
+              <span className="text-sm text-red-500 font-mono">Poor (0-39)</span>
+              <span className="text-2xl font-mono font-bold text-red-500">{stats.health_distribution.Poor || 0}</span>
             </div>
-            <div className="mt-2 h-1.5 bg-red-200 rounded-full overflow-hidden">
+            <div className="mt-2 h-1.5 bg-red-500/20 rounded-full overflow-hidden">
               <div 
                 className="h-full bg-red-500 rounded-full"
                 style={{ width: `${((stats.health_distribution.Poor || 0) / totalNodes) * 100}%` }}
@@ -343,73 +349,73 @@ export default function NetworkPage() {
         {/* Two Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Country Distribution */}
-          <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+          <div className="bg-card-bg border border-card-border rounded-xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-card-border flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Globe2 className="w-5 h-5 text-[#e85a4f]" />
-                <h3 className="font-semibold text-gray-900">Geographic Distribution</h3>
+                <Globe2 className="w-5 h-5 text-orb-purple" />
+                <h3 className="font-mono font-semibold text-foreground">Geographic Distribution</h3>
               </div>
-              <span className="text-xs text-gray-400">{stats.network.unique_countries} countries</span>
+              <span className="text-xs text-gray-400 font-mono">{stats.network.unique_countries} countries</span>
             </div>
-            <div className="divide-y divide-gray-50">
+            <div className="divide-y divide-card-border">
               {countryData.map((item, index) => (
                 <div 
                   key={item.country}
-                  className="px-6 py-3 flex items-center hover:bg-gray-50 transition-colors"
+                  className="px-6 py-3 flex items-center hover:bg-card-border/50 transition-colors"
                 >
-                  <span className="w-6 text-sm text-gray-400 font-medium">{index + 1}</span>
-                  <span className="flex-1 text-sm font-medium text-gray-900">{item.country}</span>
-                  <div className="w-32 h-2 bg-gray-100 rounded-full overflow-hidden mr-4">
+                  <span className="w-6 text-sm text-gray-400 font-mono font-medium">{index + 1}</span>
+                  <span className="flex-1 text-sm font-mono font-medium text-foreground">{item.country}</span>
+                  <div className="w-32 h-2 bg-card-border rounded-full overflow-hidden mr-4">
                     <div 
-                      className="h-full bg-[#e85a4f] rounded-full transition-all"
+                      className="h-full bg-orb-purple rounded-full transition-all"
                       style={{ width: `${(item.count / totalNodes) * 100}%` }}
                     />
                   </div>
-                  <span className="text-sm font-semibold text-gray-900 w-12 text-right">{item.count}</span>
+                  <span className="text-sm font-mono font-semibold text-foreground w-12 text-right">{item.count}</span>
                 </div>
               ))}
             </div>
             <Link 
               href={`/nodes${countryData.length ? `?country=${encodeURIComponent(countryData[0].country)}` : ""}`}
-              className="flex items-center justify-center gap-2 px-6 py-3 text-sm font-medium text-[#e85a4f] hover:bg-[#e85a4f]/5 border-t border-gray-100 transition-colors"
+              className="flex items-center justify-center gap-2 px-6 py-3 text-sm font-mono font-medium text-orb-purple hover:bg-orb-purple/5 border-t border-card-border transition-colors"
             >
               View All Nodes <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
 
           {/* Version Distribution */}
-          <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+          <div className="bg-card-bg border border-card-border rounded-xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-card-border flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <ArrowUpDown className="w-5 h-5 text-[#e85a4f]" />
-                <h3 className="font-semibold text-gray-900">Version Distribution</h3>
+                <ArrowUpDown className="w-5 h-5 text-orb-teal" />
+                <h3 className="font-mono font-semibold text-foreground">Version Distribution</h3>
               </div>
-              <span className="text-xs text-gray-400">{versionData.length} versions</span>
+              <span className="text-xs text-gray-400 font-mono">{versionData.length} versions</span>
             </div>
-            <div className="divide-y divide-gray-50">
+            <div className="divide-y divide-card-border">
               {versionData.slice(0, 8).map((item, index) => (
                 <div 
                   key={item.version}
-                  className="px-6 py-3 flex items-center hover:bg-gray-50 transition-colors"
+                  className="px-6 py-3 flex items-center hover:bg-card-border/50 transition-colors"
                 >
-                  <span className="w-6 text-sm text-gray-400 font-medium">{index + 1}</span>
-                  <span className="flex-1 text-sm font-mono text-gray-900">
+                  <span className="w-6 text-sm text-gray-400 font-mono font-medium">{index + 1}</span>
+                  <span className="flex-1 text-sm font-mono text-foreground">
                     {item.version || "Unknown"}
                   </span>
-                  <div className="w-32 h-2 bg-gray-100 rounded-full overflow-hidden mr-4">
+                  <div className="w-32 h-2 bg-card-border rounded-full overflow-hidden mr-4">
                     <div 
-                      className="h-full bg-blue-500 rounded-full transition-all"
+                      className="h-full bg-orb-teal rounded-full transition-all"
                       style={{ width: `${(item.count / totalNodes) * 100}%` }}
                     />
                   </div>
-                  <span className="text-sm text-gray-500 w-16 text-right">
+                  <span className="text-sm font-mono text-gray-400 w-16 text-right">
                     {((item.count / totalNodes) * 100).toFixed(1)}%
                   </span>
                 </div>
               ))}
             </div>
             {versionData.length > 8 && (
-              <div className="px-6 py-3 text-center text-sm text-gray-400 border-t border-gray-100">
+              <div className="px-6 py-3 text-center text-sm font-mono text-gray-400 border-t border-card-border">
                 +{versionData.length - 8} more versions
               </div>
             )}
