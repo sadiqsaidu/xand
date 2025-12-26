@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: xandeum-explorer-backend
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: HOST
+        value: 0.0.0.0
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: AI_MODEL
+        value: meta-llama/llama-3.3-70b-instruct:free
+      - key: ALLOWED_ORIGINS
+        value: https://xand-two.vercel.app,https://xand.vercel.app
+      - key: SYNC_INTERVAL_MS
+        value: 60000
+      - key: LOG_LEVEL
+        value: info

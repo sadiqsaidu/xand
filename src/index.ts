@@ -46,8 +46,9 @@ const app = new Hono();
 // CORS
 app.use("/*", cors({
   origin: process.env.ALLOWED_ORIGINS?.split(",") || ["*"],
-  allowMethods: ["GET", "POST", "OPTIONS"],
+  allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
 }));
 
 // Request logging (development only)
