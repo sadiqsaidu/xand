@@ -160,14 +160,6 @@ function SearchContent() {
         {/* AI Summary */}
         {(aiLoading || aiAnswer) && (
           <div className="mb-6 rounded-xl border border-gray-200 bg-white p-4">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold text-gray-700">AI Summary</span>
-              </div>
-              {aiSnapshot?.matched_country_count !== undefined && (
-                <span className="text-xs text-gray-500">Matched country count: {aiSnapshot.matched_country_count ?? "N/A"}</span>
-              )}
-            </div>
             {aiLoading ? (
               <p className="text-gray-500 text-sm">Analyzing network data...</p>
             ) : (

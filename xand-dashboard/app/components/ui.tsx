@@ -1,7 +1,92 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useMemo } from "react";
 import { LucideIcon, TrendingUp, TrendingDown } from "lucide-react";
+
+// Mini sparkline chart component for CPU trends
+interface SparklineProps {
+  data: number[];
+  width?: number;
+  height?: number;
+  color?: string;
+  fillColor?: string;
+}
+
+export function Sparkline({ 
+  data, 
+  width = 80, 
+  height = 24, 
+  color = "#10b981",
+  fillColor = "rgba(16, 185, 129, 0.1)"
+}: SparklineProps) {
+  const path = useMemo(() => {
+    if (!data || data.length < 2) return "";
+    
+    const max = Math.max(...data, 1);
+    const min = Math.min(...data, 0);
+    const range = max - min || 1;
+    
+    const points = data.map((val, i) => {
+      const x = (i / (data.length - 1)) * width;
+      const y = height - ((val - min) / range) * height;
+      return `${x},${y}`;
+    });
+    
+    return `M${points.join(" L")}`;
+  }, [data, width, height]);
+
+  const fillPath = useMemo(() => {
+    if (!data || data.length < 2) return "";
+    
+    const max = Math.max(...data, 1);
+    const min = Math.min(...data, 0);
+    const range = max - min || 1;
+    
+    const points = data.map((val, i) => {
+      const x = (i / (data.length - 1)) * width;
+      const y = height - ((val - min) / range) * height;
+      return `${x},${y}`;
+    });
+    
+    return `M0,${height} L${points.join(" L")} L${width},${height} Z`;
+  }, [data, width, height]);
+
+  // Determine color based on trend (last value vs first)
+  const trendColor = useMemo(() => {
+    if (!data || data.length < 2) return color;
+    const trend = data[data.length - 1] - data[0];
+    // For CPU: higher is worse (red), lower is better (green)
+    return trend > 5 ? "#ef4444" : trend < -5 ? "#10b981" : "#f59e0b";
+  }, [data, color]);
+
+  const trendFill = useMemo(() => {
+    if (!data || data.length < 2) return fillColor;
+    const trend = data[data.length - 1] - data[0];
+    return trend > 5 ? "rgba(239, 68, 68, 0.1)" : trend < -5 ? "rgba(16, 185, 129, 0.1)" : "rgba(245, 158, 11, 0.1)";
+  }, [data, fillColor]);
+
+  if (!data || data.length < 2) {
+    return (
+      <div className="flex items-center justify-center" style={{ width, height }}>
+        <span className="text-xs text-gray-400">—</span>
+      </div>
+    );
+  }
+
+  return (
+    <svg width={width} height={height} className="overflow-visible">
+      <path d={fillPath} fill={trendFill} />
+      <path 
+        d={path} 
+        fill="none" 
+        stroke={trendColor} 
+        strokeWidth={1.5} 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
 interface StatCardProps {
   title: string;
@@ -26,21 +111,21 @@ const colorClasses = {
 
 export function StatCard({ title, value, icon: Icon, subtext, trend, color = "blue" }: StatCardProps) {
   return (
-    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+    <div className="bg-white p-6 border border-gray-200 hover:border-gray-300 transition-colors">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm font-medium text-gray-500">{title}</p>
-          <h3 className="text-2xl font-bold text-gray-900 mt-1">{value}</h3>
-          {subtext && <p className="text-xs text-gray-400 mt-1">{subtext}</p>}
+          <p className="text-xs font-mono uppercase tracking-wider text-gray-500">{title}</p>
+          <h3 className="text-2xl font-mono font-medium text-gray-900 mt-2">{value}</h3>
+          {subtext && <p className="text-xs font-mono text-gray-400 mt-1">{subtext}</p>}
           {trend && (
-            <p className={`text-xs mt-1 flex items-center gap-1 ${trend.positive ? 'text-green-600' : 'text-red-600'}`}>
-              {trend.positive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+            <p className={`text-xs font-mono mt-2 flex items-center gap-1 ${trend.positive ? 'text-green-600' : 'text-red-600'}`}>
+              {trend.positive ? <TrendingUp className="w-3 h-3" strokeWidth={1.5} /> : <TrendingDown className="w-3 h-3" strokeWidth={1.5} />}
               {trend.value}
             </p>
           )}
         </div>
-        <div className={`p-3 rounded-lg ${colorClasses[color]}`}>
-          <Icon className="w-6 h-6" />
+        <div className="p-2 bg-gray-50">
+          <Icon className="w-5 h-5 text-gray-600" strokeWidth={1.5} />
         </div>
       </div>
     </div>

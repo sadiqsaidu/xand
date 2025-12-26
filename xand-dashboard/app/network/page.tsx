@@ -112,16 +112,7 @@ export default function NetworkPage() {
     <div className="min-h-screen bg-white">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Network Statistics</h1>
-            <p className="text-gray-500 mt-1 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              Live • Updated {stats.network.last_sync 
-                ? new Date(stats.network.last_sync).toLocaleTimeString() 
-                : "Never"}
-            </p>
-          </div>
+        <div className="flex items-center justify-end mb-8">
           <button
             onClick={() => loadData(true)}
             disabled={refreshing}

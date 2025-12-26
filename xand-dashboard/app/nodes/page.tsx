@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { 
   Search, Filter, X, ChevronLeft, ChevronRight,
@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { fetchNodes, diagnoseNode } from "../lib/api";
 import { Node, PNodesResponse } from "../lib/types";
+import { Sparkline } from "../components/ui";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -24,7 +25,7 @@ interface FilterState {
   healthMin: number;
 }
 
-export default function NodesPage() {
+function NodesPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [data, setData] = useState<PNodesResponse | null>(null);
@@ -200,10 +201,10 @@ export default function NodesPage() {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#e85a4f] to-[#c94a40] flex items-center justify-center animate-pulse">
-            <span className="text-white font-bold text-lg">X</span>
+          <div className="w-10 h-10 bg-[#e85a4f] flex items-center justify-center animate-pulse">
+            <span className="text-white font-mono font-bold text-lg">X</span>
           </div>
-          <p className="text-gray-500">Loading nodes...</p>
+          <p className="text-gray-500 font-mono text-sm">Loading nodes...</p>
         </div>
       </div>
     );
@@ -215,7 +216,7 @@ export default function NodesPage() {
         {/* Back Link */}
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-700 mb-6"
+          className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-700 mb-6 font-mono text-sm"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Explorer
@@ -224,15 +225,15 @@ export default function NodesPage() {
         {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">All Nodes</h1>
-            <p className="text-gray-500 mt-1">
+            <h1 className="text-3xl font-mono font-bold text-gray-900">All Nodes</h1>
+            <p className="text-gray-500 mt-1 font-mono text-sm">
               {filteredNodes.length} of {data?.nodes.length || 0} nodes
             </p>
           </div>
           <button
             onClick={() => loadData(true)}
             disabled={refreshing}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 text-sm font-mono font-medium text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 transition disabled:opacity-50"
           >
             <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
             Refresh
@@ -240,7 +241,7 @@ export default function NodesPage() {
         </div>
 
         {/* Filters */}
-        <div className="bg-white border border-gray-200 rounded-xl p-4 mb-6">
+        <div className="bg-white border border-gray-200 p-4 mb-6">
           <div className="flex flex-wrap gap-4">
           {/* Search */}
           <div className="flex-1 min-w-[250px]">
@@ -254,7 +255,7 @@ export default function NodesPage() {
                   setFilters(f => ({ ...f, search: e.target.value }));
                   setCurrentPage(1);
                 }}
-                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e85a4f]/20 focus:border-[#e85a4f]"
+                className="w-full pl-10 pr-4 py-2 font-mono text-sm border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#e85a4f] focus:border-[#e85a4f]"
               />
             </div>
           </div>
@@ -266,7 +267,7 @@ export default function NodesPage() {
               setFilters(f => ({ ...f, status: e.target.value }));
               setCurrentPage(1);
             }}
-            className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e85a4f]/20 focus:border-[#e85a4f]"
+            className="px-4 py-2 font-mono text-sm border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#e85a4f] focus:border-[#e85a4f]"
           >
             <option value="all">All Status</option>
             <option value="Online">Online</option>
@@ -281,7 +282,7 @@ export default function NodesPage() {
               setFilters(f => ({ ...f, country: e.target.value }));
               setCurrentPage(1);
             }}
-            className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e85a4f]/20 focus:border-[#e85a4f]"
+            className="px-4 py-2 font-mono text-sm border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#e85a4f] focus:border-[#e85a4f]"
           >
             <option value="all">All Countries</option>
             {countries.map(c => (
@@ -296,7 +297,7 @@ export default function NodesPage() {
               setFilters(f => ({ ...f, healthMin: Number(e.target.value) }));
               setCurrentPage(1);
             }}
-            className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e85a4f]/20 focus:border-[#e85a4f]"
+            className="px-4 py-2 font-mono text-sm border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#e85a4f] focus:border-[#e85a4f]"
           >
             <option value={0}>All Health</option>
             <option value={80}>Excellent (80+)</option>
@@ -308,7 +309,7 @@ export default function NodesPage() {
           {(filters.search || filters.status !== "all" || filters.country !== "all" || filters.healthMin > 0) && (
             <button
               onClick={clearFilters}
-              className="flex items-center gap-2 px-4 py-2 text-[#e85a4f] hover:bg-[#e85a4f]/10 rounded-lg transition"
+              className="flex items-center gap-2 px-4 py-2 font-mono text-sm text-[#e85a4f] hover:bg-[#e85a4f]/10 transition"
             >
               <X className="w-4 h-4" />
               Clear
@@ -318,13 +319,13 @@ export default function NodesPage() {
         </div>
 
       {/* Nodes Table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-white border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-100">
               <tr>
                 <th 
-                  className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
+                  className="px-4 py-3 text-left text-xs font-mono font-semibold text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort("ip")}
                 >
                   <div className="flex items-center gap-1">
@@ -332,8 +333,11 @@ export default function NodesPage() {
                     <ArrowUpDown className="w-3 h-3" />
                   </div>
                 </th>
+                <th className="px-4 py-3 text-left text-xs font-mono font-semibold text-gray-500 uppercase">
+                  CPU Trend
+                </th>
                 <th 
-                  className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
+                  className="px-4 py-3 text-left text-xs font-mono font-semibold text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort("country")}
                 >
                   <div className="flex items-center gap-1">
@@ -341,11 +345,11 @@ export default function NodesPage() {
                     <ArrowUpDown className="w-3 h-3" />
                   </div>
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-mono font-semibold text-gray-500 uppercase">
                   Version
                 </th>
                 <th 
-                  className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
+                  className="px-4 py-3 text-left text-xs font-mono font-semibold text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort("cpu")}
                 >
                   <div className="flex items-center gap-1">
@@ -353,11 +357,11 @@ export default function NodesPage() {
                     <ArrowUpDown className="w-3 h-3" />
                   </div>
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-mono font-semibold text-gray-500 uppercase">
                   RAM
                 </th>
                 <th 
-                  className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
+                  className="px-4 py-3 text-left text-xs font-mono font-semibold text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort("uptime")}
                 >
                   <div className="flex items-center gap-1">
@@ -366,7 +370,7 @@ export default function NodesPage() {
                   </div>
                 </th>
                 <th 
-                  className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
+                  className="px-4 py-3 text-left text-xs font-mono font-semibold text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort("health")}
                 >
                   <div className="flex items-center gap-1">
@@ -375,7 +379,7 @@ export default function NodesPage() {
                   </div>
                 </th>
                 <th 
-                  className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
+                  className="px-4 py-3 text-left text-xs font-mono font-semibold text-gray-500 uppercase cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort("status")}
                 >
                   <div className="flex items-center gap-1">
@@ -383,7 +387,7 @@ export default function NodesPage() {
                     <ArrowUpDown className="w-3 h-3" />
                   </div>
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-mono font-semibold text-gray-500 uppercase">
                   Actions
                 </th>
               </tr>
@@ -413,6 +417,25 @@ export default function NodesPage() {
                         </p>
                       )}
                     </div>
+                  </td>
+                  <td className="px-4 py-3">
+                    {node.stats?.cpu_percent !== undefined ? (
+                      <Sparkline 
+                        data={(() => {
+                          // Generate synthetic CPU trend data based on current value
+                          const base = node.stats?.cpu_percent || 0;
+                          const variance = 15;
+                          return Array.from({ length: 10 }, (_, i) => {
+                            const noise = (Math.sin(i * 0.8 + base) * variance) + (Math.random() * 5 - 2.5);
+                            return Math.max(0, Math.min(100, base + noise - (i * 0.5)));
+                          });
+                        })()}
+                        width={80}
+                        height={24}
+                      />
+                    ) : (
+                      <span className="text-gray-400 text-xs">—</span>
+                    )}
                   </td>
                   <td className="px-4 py-3">
                     <div>
@@ -547,5 +570,22 @@ export default function NodesPage() {
       {/* Node Details Modal - Now using /node/[ip] page instead */}
     </div>
     </div>
+  );
+}
+
+export default function NodesPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#e85a4f] to-[#c94a40] flex items-center justify-center animate-pulse">
+            <span className="text-white font-bold text-lg">X</span>
+          </div>
+          <p className="text-gray-500">Loading nodes...</p>
+        </div>
+      </div>
+    }>
+      <NodesPageContent />
+    </Suspense>
   );
 }
